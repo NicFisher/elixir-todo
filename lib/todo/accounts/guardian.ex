@@ -8,11 +8,6 @@ defmodule Todo.Accounts.Guardian do
   # token, and resource_from_claims is used to rehydrate the User
   # from the claims.
 
-  # There are many other callbacks that you can use,
-  # but we're going basic.
-
-  # https://hexdocs.pm/guardian/Guardian.html#callbacks
-
   def subject_for_token(user, _claims) do
     {:ok, to_string(user.id)}
   end

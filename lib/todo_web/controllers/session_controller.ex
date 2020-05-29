@@ -4,17 +4,15 @@ defmodule TodoWeb.SessionController do
   alias Todo.{Accounts, Accounts.User, Accounts.Guardian}
 
   def new(conn, _) do
-    changeset = Accounts.change_user(%User{})
     user = Guardian.Plug.current_resource(conn)
-
     if user do
       redirect(conn, to: "/protected")
     else
+      changeset = Accounts.change_user(%User{})
       render(conn, "new.html", changeset: changeset)
     end
   end
 
-  @spec login(Plug.Conn.t(), map) :: Plug.Conn.t()
   def login(conn, %{"user" => %{"username" => username, "password" => password}}) do
     Accounts.authenticate_user(username, password)
     |> login_reply(conn)
@@ -23,7 +21,7 @@ defmodule TodoWeb.SessionController do
   def logout(conn, _) do
     conn
     |> Guardian.Plug.sign_out()
-    |> redirect(to: "/login")
+    |> redirect(to: Routes.session_path(conn, :login))
   end
 
   defp login_reply({:ok, user}, conn) do
@@ -33,9 +31,9 @@ defmodule TodoWeb.SessionController do
     |> redirect(to: "/protected")
   end
 
-  defp login_reply({:error, reason}, conn) do
+  defp login_reply({:error, :invalid_credentials}, conn) do
     conn
-    |> put_flash(:error, to_string(reason))
+    |> put_flash(:error, "Invalid login details")
     |> new(%{})
   end
 end
