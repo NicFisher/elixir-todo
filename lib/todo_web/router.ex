@@ -1,6 +1,14 @@
 defmodule TodoWeb.Router do
   use TodoWeb, :router
 
+  pipeline :auth do
+    plug Todo.Accounts.Pipeline
+  end
+
+  pipeline :auth_required do
+    plug Guardian.Plug.EnsureAuthenticated
+  end
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -14,9 +22,19 @@ defmodule TodoWeb.Router do
   end
 
   scope "/", TodoWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     get "/", PageController, :index
+
+    get "/login", SessionController, :new
+    post "/login", SessionController, :login
+    post "/logout", SessionController, :logout
+  end
+
+  scope "/", TodoWeb do
+    pipe_through [:browser, :auth, :auth_required]
+
+    get "/protected", PageController, :protected
   end
 
   # Other scopes may use custom stacks.
