@@ -4,8 +4,7 @@ defmodule TodoWeb.SessionController do
   alias Todo.{Accounts, Accounts.User, Accounts.Guardian}
 
   def new(conn, _) do
-    user = Guardian.Plug.current_resource(conn)
-    if user do
+    if user(conn) do
       redirect(conn, to: "/protected")
     else
       changeset = Accounts.change_user(%User{})
@@ -22,6 +21,10 @@ defmodule TodoWeb.SessionController do
     conn
     |> Guardian.Plug.sign_out()
     |> redirect(to: Routes.session_path(conn, :login))
+  end
+
+  defp user(conn) do
+    Guardian.Plug.current_resource(conn)
   end
 
   defp login_reply({:ok, user}, conn) do
