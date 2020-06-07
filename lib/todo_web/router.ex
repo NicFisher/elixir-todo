@@ -15,6 +15,8 @@ defmodule TodoWeb.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :fetch_live_flash
+    plug :put_root_layout, {TodoWeb.LayoutView, :root}
   end
 
   pipeline :api do
