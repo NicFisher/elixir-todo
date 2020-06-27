@@ -18,4 +18,8 @@ defmodule Todo.Accounts.Guardian do
   rescue
     Ecto.NoResultsError -> {:error, :resource_not_found}
   end
+
+  def add_user(conn) do
+    require IEx; IEx.pry
+  end
 end

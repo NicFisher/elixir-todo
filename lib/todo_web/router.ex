@@ -7,6 +7,10 @@ defmodule TodoWeb.Router do
 
   pipeline :auth_required do
     plug Guardian.Plug.EnsureAuthenticated
+    # how is this working?
+    plug Guardian.Plug.VerifySession
+    plug Guardian.Plug.LoadResource
+    plug Guardian.Plug.EnsureAuthenticated
   end
 
   pipeline :browser do
@@ -37,6 +41,7 @@ defmodule TodoWeb.Router do
     pipe_through [:browser, :auth, :auth_required]
 
     get "/protected", PageController, :protected
+    get "/tasks", TaskController, :index
   end
 
   # Other scopes may use custom stacks.

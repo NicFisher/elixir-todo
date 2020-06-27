@@ -2,10 +2,13 @@ defmodule Todo.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
   alias Argon2
+  alias Todo.Tasks.Task
 
+  @primary_key {:id, :binary_id, autogenerate: true}
   schema "users" do
     field :password, :string
     field :username, :string
+    has_many :tasks, Task
 
     timestamps()
   end
