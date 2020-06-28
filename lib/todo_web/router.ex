@@ -27,7 +27,7 @@ defmodule TodoWeb.Router do
     get "/", PageController, :index
 
     get "/login", SessionController, :new
-    resources "/users", UserController, only: [:new, :create, :update]
+    resources "/users", UserController, only: [:new, :create, :update, :edit]
     post "/login", SessionController, :login
     post "/logout", SessionController, :logout
   end

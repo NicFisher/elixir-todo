@@ -6,7 +6,7 @@ defmodule Todo.Accounts.User do
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "users" do
     field :password, :string
-    field :username, :string
+    field :email, :string
     field :name, :string
 
     timestamps()
@@ -15,8 +15,9 @@ defmodule Todo.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:username, :password, :name])
-    |> validate_required([:username, :password, :name])
+    |> cast(attrs, [:email, :password, :name])
+    |> validate_required([:email, :password, :name])
+    |> unique_constraint(:email)
     |> put_password_hash()
   end
 

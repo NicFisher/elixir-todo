@@ -1,6 +1,4 @@
-<h2>Create a user</h2>
-
-<%= form_for @changeset, Routes.user_path(@conn, :create), fn f -> %>
+<%= form_for @changeset, Routes.user_path(@conn, :update, @user), fn f -> %>
   <div class="form-group">
     <%= label f, :name, class: "control-label" %>
     <%= text_input f, :name, class: "form-control" %>
@@ -14,12 +12,6 @@
   </div>
 
   <div class="form-group">
-    <%= label f, :password, class: "control-label" %>
-    <%= password_input f, :password, class: "form-control" %>
-    <%= error_tag f, :password %>
-  </div>
-
-  <div class="form-group">
-    <%= submit "Create Account", class: "btn btn-primary" %>
+    <%= submit "Update Account", class: "btn btn-primary" %>
   </div>
 <% end %>
