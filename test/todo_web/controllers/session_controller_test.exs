@@ -1,9 +1,18 @@
 defmodule TodoWeb.SessionControllerTest do
   use TodoWeb.ConnCase
-  alias Todo.Accounts
+  alias Todo.{Accounts, Accounts.User, Accounts.Guardian}
+  # alias Todo.Accounts
+
+  setup %{conn: conn} do
+    auth_conn =
+      conn
+      |> Guardian.Plug.sign_in(%User{id: "3f10cb63-122e-47f6-b987-2ee0b0e63446"})
+
+    {:ok, auth_conn: auth_conn, conn: conn}
+  end
 
   describe "GET /login" do
-    @valid_attrs %{password: "some password", username: "some username"}
+    @valid_attrs %{password: "some password", email: "email@email.com", name: "Joe Bloggs"}
 
     def user_fixture(attrs \\ %{}) do
       {:ok, user} =
@@ -19,10 +28,17 @@ defmodule TodoWeb.SessionControllerTest do
       assert html_response(conn, 200) =~ "Login Page"
     end
 
-    # test "with user returns login page", %{conn: conn} do
-      # can't figure how to set this up
-      # require IEx; IEx.pry;
-    # end
+    test "with user returns protected page", %{auth_conn: auth_conn} do
+      Todo.Repo.insert(%User{
+        id: "3f10cb63-122e-47f6-b987-2ee0b0e63446",
+        email: "email@email.com",
+        password: "password",
+        name: "Joe Bloggs"
+      })
+
+      conn = get(auth_conn, "/login")
+      assert redirected_to(conn) == Routes.page_path(conn, :protected)
+    end
   end
 
   describe "POST /login" do
@@ -33,7 +49,9 @@ defmodule TodoWeb.SessionControllerTest do
     end
 
     test "with invalid params returns protected page", %{conn: conn} do
-      conn = post(conn, "/login", user: %{password: "invalid password", username: "invalid username"})
+      conn =
+        post(conn, "/login", user: %{password: "invalid password", email: "invalid@email.com"})
+
       assert html_response(conn, 200) =~ "Invalid login details"
     end
   end

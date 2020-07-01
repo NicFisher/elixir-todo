@@ -7,11 +7,12 @@
 
   <div class="form-group">
     <%= label f, :email, class: "control-label" %>
-    <%= text_input f, :email, class: "form-control" %>
+    <%= email_input f, :email, class: "form-control" %>
     <%= error_tag f, :email %>
   </div>
 
   <div class="form-group">
+    <%= button "Back", to: Routes.page_path(@conn, :protected), method: :get, class: "btn btn-primary" %>
     <%= submit "Update Account", class: "btn btn-primary" %>
   </div>
 <% end %>

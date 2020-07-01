@@ -3,23 +3,22 @@ defmodule TodoWeb.UserController do
   alias Todo.{Accounts, Accounts.User, Accounts.Guardian}
 
   def new(conn, _params) do
-    with %User{} <- Guardian.Plug.current_resource(conn) do
-      redirect(conn, to: "/protected")
-    else
+    case Guardian.Plug.current_resource(conn) do
+      %User{} -> redirect(conn, to: "/protected")
       nil -> render(conn, "new.html", changeset: Accounts.change_user(%User{}))
     end
   end
 
   def create(conn, %{"user" => %{"email" => email, "password" => password, "name" => name}}) do
-    with {:ok, _user} <- Accounts.create_user(%{"email" => email, "password" => password, "name" => name}) do
-      Accounts.authenticate_user(email, password)
-      |> login_user(conn)
-    else
+    case Accounts.create_user(%{"email" => email, "password" => password, "name" => name}) do
+      {:ok, _user} ->
+        Accounts.authenticate_user(email, password) |> login_user(conn)
+
       {:error, changeset} ->
-        conn
-        |> put_flash(:error, "Invalid details.")
-        |> render("new.html", changeset: changeset)
-      nil -> conn |> put_flash(:error, "Invalid details.") |> new(%{})
+        conn |> put_flash(:error, "Invalid details.") |> render("new.html", changeset: changeset)
+
+      nil ->
+        conn |> put_flash(:error, "Invalid details.") |> new(%{})
     end
   end
 
@@ -33,7 +32,7 @@ defmodule TodoWeb.UserController do
     user = Guardian.Plug.current_resource(conn)
     changeset = Accounts.change_user(user)
 
-    render conn, "edit.html", changeset: changeset, user: user
+    render(conn, "edit.html", changeset: changeset, user: user)
   end
 
   def update(conn, %{"user" => user}) do
@@ -42,9 +41,9 @@ defmodule TodoWeb.UserController do
         conn
         |> put_flash(:info, "User Updated")
         |> redirect(to: "/protected")
+
       {:error, changeset} ->
-        require IEx; IEx.pry
-        render conn, "edit.html", changeset: changeset, user: Guardian.Plug.current_resource(conn)
+        render(conn, "edit.html", changeset: changeset, user: Guardian.Plug.current_resource(conn))
     end
   end
 
