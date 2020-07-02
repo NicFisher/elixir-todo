@@ -6,9 +6,13 @@ defmodule Todo.AccountsTest do
   describe "users" do
     alias Todo.Accounts.User
 
-    @valid_attrs %{password: "some password", username: "some username"}
-    @update_attrs %{password: "some updated password", username: "some updated username"}
-    @invalid_attrs %{password: nil, username: nil}
+    @valid_attrs %{password: "some password", email: "email@email.com", name: "some name"}
+    @update_attrs %{
+      password: "some updated password",
+      email: "updated@email.com",
+      name: "some updated name"
+    }
+    @invalid_attrs %{password: nil, email: nil, name: nil}
 
     def user_fixture(attrs \\ %{}) do
       {:ok, user} =
@@ -32,7 +36,7 @@ defmodule Todo.AccountsTest do
     test "create_user/1 with valid data creates a user" do
       assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
       assert {:ok, user} == Argon2.check_pass(user, "some password", hash_key: :password)
-      assert user.username == "some username"
+      assert user.email == "email@email.com"
     end
 
     test "create_user/1 with invalid data returns error changeset" do
@@ -43,7 +47,7 @@ defmodule Todo.AccountsTest do
       user = user_fixture()
       assert {:ok, %User{} = user} = Accounts.update_user(user, @update_attrs)
       assert {:ok, user} == Argon2.check_pass(user, "some updated password", hash_key: :password)
-      assert user.username == "some updated username"
+      assert user.email == "updated@email.com"
     end
 
     test "update_user/2 with invalid data returns error changeset" do

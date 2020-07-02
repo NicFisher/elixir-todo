@@ -3,9 +3,11 @@ defmodule Todo.Accounts.User do
   import Ecto.Changeset
   alias Argon2
 
+  @primary_key {:id, :binary_id, autogenerate: true}
   schema "users" do
     field :password, :string
-    field :username, :string
+    field :email, :string
+    field :name, :string
 
     timestamps()
   end
@@ -13,8 +15,9 @@ defmodule Todo.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:username, :password])
-    |> validate_required([:username, :password])
+    |> cast(attrs, [:email, :password, :name])
+    |> validate_required([:email, :password, :name])
+    |> unique_constraint(:email)
     |> put_password_hash()
   end
 

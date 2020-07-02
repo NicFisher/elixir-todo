@@ -1,5 +1,6 @@
 <h2>Protected Page</h2>
 <p>You can only see this page if you are logged in</p>
-<p>You're logged in as <%= @current_user.username %></p>
+<p>You're logged in as <%= @current_user.email %></p>
 
 <%= button "Logout", to: Routes.session_path(@conn, :logout), method: :post %>
+<%= button "Edit User", to: Routes.user_path(@conn, :edit, @current_user.id), method: :get %>
