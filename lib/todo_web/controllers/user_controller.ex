@@ -29,10 +29,10 @@ defmodule TodoWeb.UserController do
   end
 
   def edit(conn, _params) do
-    user = Guardian.Plug.current_resource(conn)
-    changeset = Accounts.change_user(user)
+    current_user = Guardian.Plug.current_resource(conn)
+    changeset = Accounts.change_user(current_user)
 
-    render(conn, "edit.html", changeset: changeset, user: user)
+    render(conn, "edit.html", changeset: changeset, current_user: current_user)
   end
 
   def update(conn, %{"user" => user}) do
