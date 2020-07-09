@@ -43,7 +43,9 @@ defmodule TodoWeb.UserController do
         |> redirect(to: "/protected")
 
       {:error, changeset} ->
-        render(conn, "edit.html", changeset: changeset, user: Guardian.Plug.current_resource(conn))
+        conn
+        |> put_flash(:error, "Invalid details.")
+        |> render("edit.html", changeset: changeset, user: Guardian.Plug.current_resource(conn))
     end
   end
 
