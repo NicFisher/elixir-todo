@@ -1,7 +1,6 @@
 defmodule TodoWeb.SessionControllerTest do
   use TodoWeb.ConnCase
   alias Todo.{Accounts, Accounts.User, Accounts.Guardian}
-  # alias Todo.Accounts
 
   setup %{conn: conn} do
     auth_conn =

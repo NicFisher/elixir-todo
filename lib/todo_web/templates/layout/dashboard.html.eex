@@ -12,21 +12,14 @@
     <nav class="flex items-center justify-between flex-wrap bg-blue-500 p-6 font-bold font-sans">
       <div class="w-full block flex-grow flex items-center w-auto">
         <div class="text-base flex-grow">
-          <a href="#responsive-header" class="block inline-block mt-0 text-white mr-4 hover:text-blue-700">
-            Docs
-          </a>
+          <%= link "Home", to: Routes.page_path(@conn, :protected), method: :get, class: "block inline-block mt-0 text-white mr-4 hover:text-blue-700" %>
           <a href="#responsive-header" class="block inline-block mt-0 text-white mr-4 hover:text-blue-700">
             Examples
           </a>
-          <a href="#responsive-header" class="block inline-block mt-0 text-white hover:text-blue-700">
-            Blog
-          </a>
+          <%= link "Account", to: Routes.user_path(@conn, :edit, @conn.assigns.current_user.id), method: :get, class: "block inline-block mt-0 text-white hover:text-blue-700" %>
         </div>
         <div>
-          <%= link "Login", to: Routes.session_path(@conn, :new), method: :get, class: "inline-block text-base px-4 py-2 mr-3 leading-none border rounded bg-blue-400 text-white border-blue-400 hover:border-transparent hover:bg-blue-700 hover:border-bg-blue-400 mt-0" %>
-        </div>
-        <div>
-          <%= link "Sign Up", to: Routes.user_path(@conn, :new), method: :get, class: "inline-block text-base px-4 py-2 leading-none border rounded text-blue-500 border-white bg-white hover:border-transparent hover:text-blue-500 hover:bg-gray-300 mt-0" %>
+          <%= button "Logout", to: Routes.session_path(@conn, :logout), method: :post, class: "font-bold font-sans inline-block px-4 py-2 mr-3 leading-none border rounded bg-blue-400 text-white border-blue-400 hover:border-transparent hover:bg-blue-700 hover:border-bg-blue-400 mt-0" %>
         </div>
       </div>
     </nav>

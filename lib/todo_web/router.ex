@@ -21,20 +21,25 @@ defmodule TodoWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :dashboard do
+    plug :put_layout, {TodoWeb.LayoutView, "dashboard.html"}
+  end
+
   scope "/", TodoWeb do
     pipe_through [:browser, :auth]
 
     get "/", PageController, :index
 
     get "/login", SessionController, :new
-    resources "/users", UserController, only: [:new, :create, :update, :edit]
+    resources "/users", UserController, only: [:new, :create]
     post "/login", SessionController, :login
     post "/logout", SessionController, :logout
   end
 
   scope "/", TodoWeb do
-    pipe_through [:browser, :auth, :auth_required]
+    pipe_through [:browser, :auth, :auth_required, :dashboard]
 
+    resources "/users", UserController, only: [:update, :edit]
     get "/protected", PageController, :protected
   end
 

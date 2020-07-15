@@ -2,5 +2,4 @@
 <p>You can only see this page if you are logged in</p>
 <p>You're logged in as <%= @current_user.email %></p>
 
-<%= button "Logout", to: Routes.session_path(@conn, :logout), method: :post %>
-<%= button "Edit User", to: Routes.user_path(@conn, :edit, @current_user.id), method: :get %>
+<%= button "Edit User", to: Routes.user_path(@conn, :edit, @current_user.id), method: :get, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
