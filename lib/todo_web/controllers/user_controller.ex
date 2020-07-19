@@ -58,7 +58,7 @@ defmodule TodoWeb.UserController do
 
   defp login_user({:error, :invalid_credentials}, conn) do
     conn
-    |> put_flash(:error, "Opps, something went wrong.")
+    |> put_flash(:error, "Oops, something went wrong.")
     |> new(%{})
   end
 

@@ -23,6 +23,7 @@ defmodule TodoWeb.Router do
 
   pipeline :dashboard do
     plug :put_layout, {TodoWeb.LayoutView, "dashboard.html"}
+    plug TodoWeb.Plugs.AssignUser
   end
 
   scope "/", TodoWeb do
@@ -41,6 +42,7 @@ defmodule TodoWeb.Router do
 
     resources "/users", UserController, only: [:update, :edit]
     get "/protected", PageController, :protected
+    resources "/boards", BoardController, only: [:index, :new, :create]
   end
 
   # Other scopes may use custom stacks.
