@@ -42,7 +42,7 @@ defmodule TodoWeb.Router do
 
     resources "/users", UserController, only: [:update, :edit]
     get "/protected", PageController, :protected
-    resources "/boards", BoardController, only: [:index, :new, :create]
+    resources "/boards", BoardController, only: [:index, :new, :create, :show, :edit, :update]
   end
 
   # Other scopes may use custom stacks.

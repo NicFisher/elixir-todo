@@ -22,7 +22,10 @@ defmodule Todo.Boards do
   end
 
   def list_boards_for_user(user_id) do
-    from(b in Board, where: b.user_id == ^user_id, where: b.archived == false)
+    from(b in Board,
+      where: b.user_id == ^user_id,
+      where: b.archived == false,
+      order_by: [desc: b.updated_at])
     |> Repo.all()
   end
 
@@ -40,7 +43,9 @@ defmodule Todo.Boards do
       ** (Ecto.NoResultsError)
 
   """
-  def get_board!(id), do: Repo.get!(Board, id)
+  def get_board(user_id, id) do
+    Repo.get_by(Board, [id: id, user_id: user_id])
+  end
 
   @doc """
   Creates a board.

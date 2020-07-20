@@ -35,8 +35,8 @@ defmodule TodoWeb.UserController do
     render(conn, "edit.html", changeset: changeset, current_user: current_user)
   end
 
-  def update(conn, %{"user" => user}) do
-    case update_user(conn, user) do
+  def update(conn, %{"user" => attrs}) do
+    case update_user(conn, attrs) do
       {:ok, _user} ->
         conn
         |> put_flash(:info, "User Updated")
@@ -62,8 +62,8 @@ defmodule TodoWeb.UserController do
     |> new(%{})
   end
 
-  defp update_user(conn, user) do
+  defp update_user(conn, attrs) do
     Guardian.Plug.current_resource(conn)
-    |> Accounts.update_user(user)
+    |> Accounts.update_user(attrs)
   end
 end
