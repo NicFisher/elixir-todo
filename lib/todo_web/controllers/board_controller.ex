@@ -3,7 +3,8 @@ defmodule TodoWeb.BoardController do
   alias Todo.{Boards, Boards.Board}
 
   def show(conn, %{"id" => id}) do
-    render(conn, "show.html", board: get_board(conn, id))
+    changeset = Boards.change_board(get_board(conn, id))
+    render(conn, "show.html", board: get_board(conn, id), changeset: changeset)
   end
 
   def index(conn, _params) do
