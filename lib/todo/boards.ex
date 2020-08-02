@@ -21,6 +21,15 @@ defmodule Todo.Boards do
     Repo.all(Board)
   end
 
+  @doc """
+  Returns list of boards for a specific user.
+
+  ## Examples
+
+      iex> list_boards_for_user(123)
+      [%Board{}, ...]
+
+  """
   def list_boards_for_user(user_id) do
     from(b in Board,
       where: b.user_id == ^user_id,
@@ -30,16 +39,16 @@ defmodule Todo.Boards do
   end
 
   @doc """
-  Gets a single board.
+  Gets a single board for a user.
 
   Raises `Ecto.NoResultsError` if the Board does not exist.
 
   ## Examples
 
-      iex> get_board!(123)
+      iex> get_board!(12345678, 123)
       %Board{}
 
-      iex> get_board!(456)
+      iex> get_board!(12345678, 456)
       ** (Ecto.NoResultsError)
 
   """
@@ -48,14 +57,14 @@ defmodule Todo.Boards do
   end
 
   @doc """
-  Creates a board.
+  Creates a board for a user.
 
   ## Examples
 
-      iex> create_board(%{field: value})
+      iex> create_board(%{field: value}, %User{})
       {:ok, %Board{}}
 
-      iex> create_board(%{field: bad_value})
+      iex> create_board(%{field: bad_value}, %User{})
       {:error, %Ecto.Changeset{}}
 
   """

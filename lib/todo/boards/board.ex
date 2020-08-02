@@ -14,7 +14,6 @@ defmodule Todo.Boards.Board do
 
   @doc false
   def changeset(board, attrs) do
-    # require IEx; IEx.pry
     board
     |> cast(attrs, [:name, :archived])
     |> validate_required([:name])
