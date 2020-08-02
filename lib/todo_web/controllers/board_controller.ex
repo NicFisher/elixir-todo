@@ -17,8 +17,13 @@ defmodule TodoWeb.BoardController do
 
   def create(conn, %{"board" => board}) do
     case Boards.create_board(board, Guardian.Plug.current_resource(conn)) do
-      {:ok, _board} -> conn |> put_flash(:info, "Board Created") |> render("index.html", boards: user_boards(conn))
-      {:error, _changeset} -> conn |> put_flash(:error, "Oops, something went wrong.") |> new(%{})
+      {:ok, _board} ->
+        conn
+        |> put_flash(:info, "Board Created")
+        |> render("index.html", boards: user_boards(conn))
+
+      {:error, _changeset} ->
+        conn |> put_flash(:error, "Oops, something went wrong.") |> new(%{})
     end
   end
 
@@ -46,7 +51,7 @@ defmodule TodoWeb.BoardController do
   end
 
   defp get_board(conn, id) do
-    Boards.get_board(Guardian.Plug.current_resource(conn).id, id)
+    Boards.get_board!(id, Guardian.Plug.current_resource(conn).id)
   end
 
   defp update_board(conn, attrs, id) do

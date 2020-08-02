@@ -34,7 +34,8 @@ defmodule Todo.Boards do
     from(b in Board,
       where: b.user_id == ^user_id,
       where: b.archived == false,
-      order_by: [desc: b.updated_at])
+      order_by: [desc: b.updated_at]
+    )
     |> Repo.all()
   end
 
@@ -45,15 +46,15 @@ defmodule Todo.Boards do
 
   ## Examples
 
-      iex> get_board!(12345678, 123)
+      iex> get_board!(123, 12345678)
       %Board{}
 
-      iex> get_board!(12345678, 456)
+      iex> get_board!(456, 12345678)
       ** (Ecto.NoResultsError)
 
   """
-  def get_board(user_id, id) do
-    Repo.get_by(Board, [id: id, user_id: user_id])
+  def get_board!(id, user_id) do
+    Repo.get_by(Board, id: id, user_id: user_id)
   end
 
   @doc """
@@ -91,22 +92,6 @@ defmodule Todo.Boards do
     board
     |> Board.changeset(attrs)
     |> Repo.update()
-  end
-
-  @doc """
-  Deletes a board.
-
-  ## Examples
-
-      iex> delete_board(board)
-      {:ok, %Board{}}
-
-      iex> delete_board(board)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_board(%Board{} = board) do
-    Repo.delete(board)
   end
 
   @doc """
