@@ -2,6 +2,10 @@ defmodule TodoWeb.BoardController do
   use TodoWeb, :controller
   alias Todo.{Boards, Boards.Board}
 
+  def new(conn, _params) do
+    render(conn, "new.html", changeset: Boards.change_board(%Board{}))
+  end
+
   def show(conn, %{"id" => id}) do
     changeset = Boards.change_board(get_board(conn, id))
     render(conn, "show.html", board: get_board(conn, id), changeset: changeset)
@@ -9,10 +13,6 @@ defmodule TodoWeb.BoardController do
 
   def index(conn, _params) do
     render(conn, "index.html", boards: user_boards(conn))
-  end
-
-  def new(conn, _params) do
-    render(conn, "new.html", changeset: Boards.change_board(%Board{}))
   end
 
   def create(conn, %{"board" => board}) do
@@ -39,10 +39,15 @@ defmodule TodoWeb.BoardController do
         |> put_flash(:info, "Board Updated")
         |> redirect(to: "/boards")
 
-      {:error, changeset} ->
+      {:error, %Ecto.Changeset{} = changeset} ->
         conn
         |> put_flash(:error, "Invalid details.")
         |> render("edit.html", changeset: changeset, id: id)
+
+      {:error, _error} ->
+        conn
+        |> put_flash(:error, "Oops, something went wrong.")
+        |> render("index.html", boards: user_boards(conn))
     end
   end
 
@@ -55,8 +60,9 @@ defmodule TodoWeb.BoardController do
   end
 
   defp update_board(conn, attrs, id) do
-    conn
-    |> get_board(id)
-    |> Boards.update_board(attrs)
+    case get_board(conn, id) do
+      nil -> {:error, %Board{}}
+      board -> Boards.update_board(board, attrs)
+    end
   end
 end
