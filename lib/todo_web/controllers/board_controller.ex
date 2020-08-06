@@ -1,6 +1,7 @@
 defmodule TodoWeb.BoardController do
   use TodoWeb, :controller
   alias Todo.{Boards, Boards.Board}
+  import Guardian.Plug, only: [current_resource: 1]
 
   def new(conn, _params) do
     render(conn, "new.html", changeset: Boards.change_board(%Board{}))
@@ -16,7 +17,7 @@ defmodule TodoWeb.BoardController do
   end
 
   def create(conn, %{"board" => board}) do
-    case Boards.create_board(board, Guardian.Plug.current_resource(conn)) do
+    case Boards.create_board(board, current_resource(conn)) do
       {:ok, _board} ->
         conn
         |> put_flash(:info, "Board Created")
@@ -52,11 +53,11 @@ defmodule TodoWeb.BoardController do
   end
 
   defp user_boards(conn) do
-    Boards.list_boards_for_user(Guardian.Plug.current_resource(conn).id)
+    Boards.list_boards_for_user(current_resource(conn).id)
   end
 
   defp get_board(conn, id) do
-    Boards.get_board!(id, Guardian.Plug.current_resource(conn).id)
+    Boards.get_board!(id, current_resource(conn).id)
   end
 
   defp update_board(conn, attrs, id) do

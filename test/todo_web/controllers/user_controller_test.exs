@@ -25,7 +25,7 @@ defmodule TodoWeb.UserControllerTest do
 
     test "without user in session", %{conn: conn} do
       conn = get(conn, "users/new")
-      assert html_response(conn, 200) =~ "Create a user"
+      assert html_response(conn, 200) =~ "Create Account"
     end
   end
 
@@ -67,16 +67,13 @@ defmodule TodoWeb.UserControllerTest do
 
       conn = post(conn, "users", params)
 
-      assert html_response(conn, 200) =~ "Create a user"
+      assert html_response(conn, 200) =~ "Create Account"
       assert html_response(conn, 200) =~ "Invalid details."
-
-      assert html_response(conn, 200) =~
-               "<span class=\"invalid-feedback\" phx-feedback-for=\"user_email\">has already been taken</span>"
     end
 
     test "with missing params", %{conn: conn} do
       conn = post(conn, "users", %{})
-      assert html_response(conn, 200) =~ "Create a user"
+      assert html_response(conn, 200) =~ "Create Account"
     end
   end
 end

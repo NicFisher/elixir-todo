@@ -4,8 +4,8 @@ defmodule Todo.Boards.Board do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "boards" do
-    field :name, :string
-    field :archived, :boolean
+    field :name, :string, null: false
+    field :archived, :boolean, default: false
 
     belongs_to :user, Todo.Accounts.User, foreign_key: :user_id, type: :binary_id
 
