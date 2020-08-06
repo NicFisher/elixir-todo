@@ -32,10 +32,11 @@ defmodule TodoWeb.BoardControllerTest do
 
   describe "GET board #show" do
     test "with user in session", %{auth_conn: auth_conn} do
-      {:ok, board} = Todo.Repo.insert(%Board{
-        name: "First Board",
-        user_id: "3f10cb63-122e-47f6-b987-2ee0b0e63446"
-      })
+      {:ok, board} =
+        Todo.Repo.insert(%Board{
+          name: "First Board",
+          user_id: "3f10cb63-122e-47f6-b987-2ee0b0e63446"
+        })
 
       conn = get(auth_conn, "boards/#{board.id}")
       assert html_response(conn, 200) =~ "First Board"
@@ -112,11 +113,11 @@ defmodule TodoWeb.BoardControllerTest do
 
   describe "GET board #edit" do
     test "with user in session", %{auth_conn: auth_conn} do
-
-      {:ok, board} = Todo.Repo.insert(%Board{
-        name: "First Board",
-        user_id: "3f10cb63-122e-47f6-b987-2ee0b0e63446"
-      })
+      {:ok, board} =
+        Todo.Repo.insert(%Board{
+          name: "First Board",
+          user_id: "3f10cb63-122e-47f6-b987-2ee0b0e63446"
+        })
 
       conn = get(auth_conn, "boards/#{board.id}/edit")
 
@@ -125,10 +126,11 @@ defmodule TodoWeb.BoardControllerTest do
     end
 
     test "without name params and with user in session", %{conn: conn} do
-      {:ok, board} = Todo.Repo.insert(%Board{
-        name: "First Board",
-        user_id: "3f10cb63-122e-47f6-b987-2ee0b0e63446"
-      })
+      {:ok, board} =
+        Todo.Repo.insert(%Board{
+          name: "First Board",
+          user_id: "3f10cb63-122e-47f6-b987-2ee0b0e63446"
+        })
 
       conn = get(conn, "boards/#{board.id}/edit")
 
@@ -138,14 +140,15 @@ defmodule TodoWeb.BoardControllerTest do
 
   describe "PATCH board #edit" do
     test "with valid params and user in session", %{auth_conn: auth_conn} do
-      {:ok, board} = Todo.Repo.insert(%Board{
-        name: "First Board",
-        user_id: "3f10cb63-122e-47f6-b987-2ee0b0e63446"
-      })
+      {:ok, board} =
+        Todo.Repo.insert(%Board{
+          name: "First Board",
+          user_id: "3f10cb63-122e-47f6-b987-2ee0b0e63446"
+        })
 
       params = %{
         "board" => %{
-          "name" => "Updated First Board",
+          "name" => "Updated First Board"
         }
       }
 
@@ -154,14 +157,15 @@ defmodule TodoWeb.BoardControllerTest do
     end
 
     test "with invalid params and user in session", %{auth_conn: auth_conn} do
-      {:ok, board} = Todo.Repo.insert(%Board{
-        name: "First Board",
-        user_id: "3f10cb63-122e-47f6-b987-2ee0b0e63446"
-      })
+      {:ok, board} =
+        Todo.Repo.insert(%Board{
+          name: "First Board",
+          user_id: "3f10cb63-122e-47f6-b987-2ee0b0e63446"
+        })
 
       params = %{
         "board" => %{
-          "name" => "",
+          "name" => ""
         }
       }
 
@@ -175,20 +179,22 @@ defmodule TodoWeb.BoardControllerTest do
         user_id: "3f10cb63-122e-47f6-b987-2ee0b0e63446"
       })
 
-      {:ok, another_user} = Todo.Repo.insert(%User{
-        email: "another_email@email.com",
-        password: "password",
-        name: "Joe Bloggs"
-      })
+      {:ok, another_user} =
+        Todo.Repo.insert(%User{
+          email: "another_email@email.com",
+          password: "password",
+          name: "Joe Bloggs"
+        })
 
-      {:ok, board} = Todo.Repo.insert(%Board{
-        name: "Invalid Board",
-        user_id: another_user.id
-      })
+      {:ok, board} =
+        Todo.Repo.insert(%Board{
+          name: "Invalid Board",
+          user_id: another_user.id
+        })
 
       params = %{
         "board" => %{
-          "name" => "Updated First Board",
+          "name" => "Updated First Board"
         }
       }
 
