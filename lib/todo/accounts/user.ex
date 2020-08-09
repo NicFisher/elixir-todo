@@ -8,6 +8,7 @@ defmodule Todo.Accounts.User do
     field :password, :string
     field :email, :string
     field :name, :string
+    has_many :boards, Todo.Boards.Board
 
     timestamps()
   end

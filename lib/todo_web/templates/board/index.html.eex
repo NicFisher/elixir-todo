@@ -1,0 +1,11 @@
+<div class="flex items-center flex-col">
+  <h2 class="text-gray-800 text-3xl font-semibold my-6">Boards Page</h2>
+  <%= link "New Board", to: Routes.board_path(@conn, :new), method: :get, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+  <div class="flex justify-center flex-wrap w-9/12 mt-12">
+    <%= for board <- @boards do %>
+      <div class="w-full px-2 md:w-1/4 mb-4 h-32 max-w">
+        <%= button(board.name, to: "/boards/#{board.id}", method: :get, class: "hover:bg-gray-100 w-full h-full bg-white shadow-lg rounded-lg flex items-center justify-center px-2 text-gray-800 text-xl text-center font-semibold text-align") %>
+      </div>
+    <% end %>
+  </div>
+</div>
