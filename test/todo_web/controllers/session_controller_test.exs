@@ -24,7 +24,7 @@ defmodule TodoWeb.SessionControllerTest do
 
     test "without user returns login page", %{conn: conn} do
       conn = get(conn, "/login")
-      assert html_response(conn, 200) =~ "Login Page"
+      assert html_response(conn, 200) =~ "Login"
     end
 
     test "with user returns protected page", %{auth_conn: auth_conn} do
