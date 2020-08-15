@@ -29,7 +29,7 @@ defmodule TodoWeb.Router do
   scope "/", TodoWeb do
     pipe_through [:browser, :auth]
 
-    get "/", PageController, :index
+    get "/", HomeController, :index
 
     get "/login", SessionController, :new
     resources "/users", UserController, only: [:new, :create]
@@ -41,7 +41,6 @@ defmodule TodoWeb.Router do
     pipe_through [:browser, :auth, :auth_required, :dashboard]
 
     resources "/users", UserController, only: [:update, :edit]
-    get "/protected", PageController, :protected
     resources "/boards", BoardController, only: [:index, :new, :create, :show, :edit, :update]
   end
 

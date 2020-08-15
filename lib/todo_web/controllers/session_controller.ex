@@ -5,7 +5,7 @@ defmodule TodoWeb.SessionController do
 
   def new(conn, _) do
     if user(conn) do
-      redirect(conn, to: "/protected")
+      redirect(conn, to: "/boards")
     else
       changeset = Accounts.change_user(%User{})
       render(conn, "new.html", changeset: changeset)
@@ -30,7 +30,7 @@ defmodule TodoWeb.SessionController do
   defp login_reply({:ok, user}, conn) do
     conn
     |> Guardian.Plug.sign_in(user)
-    |> redirect(to: "/protected")
+    |> redirect(to: "/boards")
   end
 
   defp login_reply({:error, :invalid_credentials}, conn) do

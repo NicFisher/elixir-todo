@@ -1,9 +1,0 @@
-<section class="phx-hero">
-  <p>Todo List</p>
-</section>
-<div>
-  <%= link "Login", to: Routes.session_path(@conn, :new), method: :get %>
-</div>
-<div>
-  <%= link "Sign Up", to: Routes.user_path(@conn, :new), method: :get %>
-</div>
