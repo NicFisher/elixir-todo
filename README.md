@@ -1,5 +1,14 @@
 # Todo
 
-This is just another todo list with user authentication and a list of todos with real time updates.
+A phoenix application similar to Trello. Users can create a board with custom columns and add cards to the board. They are also able to create a team and share boards within the team.
 
-A user should only be able to see their own todos.
+```
+git@github.com:NicFisher/elixir-todo.git
+cd todo
+mix deps.get
+mix ecto.setup
+cd apps/aegis_web/assets && npm install
+iex -S mix phx.server
+```
+
+Tailwind CSS is used for the styling.
