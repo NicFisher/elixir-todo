@@ -6,7 +6,7 @@ defmodule Todo.Boards do
   import Ecto.Query, warn: false
   alias Todo.Repo
 
-  alias Todo.Boards.Board
+  alias Todo.Boards.{Board, BoardList}
 
   @doc """
   Returns the list of boards.
@@ -54,7 +54,25 @@ defmodule Todo.Boards do
 
   """
   def get_board!(id, user_id) do
-    Repo.get_by(Board, id: id, user_id: user_id)
+    Repo.get_by!(Board, id: id, user_id: user_id) |> Repo.preload(:board_lists)
+  end
+
+  @doc """
+  Gets a single board list.
+
+  Raises `Ecto.NoResultsError` if the Board does not exist.
+
+  ## Examples
+
+      iex> get_board_list!(123, 12345678)
+      %Board{}
+
+      iex> get_board_list!(456, 12345678)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_board_list!(board, board_id) do
+    Repo.get_by!(BoardList, id: board_id, board_id: board.id)
   end
 
   @doc """
@@ -77,6 +95,25 @@ defmodule Todo.Boards do
   end
 
   @doc """
+  Creates a board list for a board.
+
+  ## Examples
+
+      iex> create_board_list(%{field: value}, %Board{})
+      {:ok, %BoardList{}}
+
+      iex> create_board_list(%{field: bad_value}, %Board{})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_board_list(attrs \\ %{}, board) do
+    board
+    |> Ecto.build_assoc(:board_lists)
+    |> BoardList.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
   Updates a board.
 
   ## Examples
@@ -95,6 +132,24 @@ defmodule Todo.Boards do
   end
 
   @doc """
+  Updates a board list.
+
+  ## Examples
+
+      iex> update_board_list(board_list, %{field: new_value})
+      {:ok, %Board{}}
+
+      iex> update_board_list(board_list, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_board_list(%BoardList{} = board_list, attrs) do
+    board_list
+    |> BoardList.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
   Returns an `%Ecto.Changeset{}` for tracking board changes.
 
   ## Examples
@@ -105,5 +160,18 @@ defmodule Todo.Boards do
   """
   def change_board(%Board{} = board, attrs \\ %{}) do
     Board.changeset(board, attrs)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking board list changes.
+
+  ## Examples
+
+      iex> change_board_list(board_list)
+      %Ecto.Changeset{data: %BoardList{}}
+
+  """
+  def change_board_list(%BoardList{} = board_list, attrs \\ %{}) do
+    BoardList.changeset(board_list, attrs)
   end
 end
