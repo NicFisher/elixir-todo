@@ -1,0 +1,15 @@
+#board-lists {
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  .board-list {
+    min-width: 250px;
+    margin: 0 4px;
+  }
+  .board-list:first-child {
+    margin-left: 0px;
+  }
+  .board-list:last-child {
+    margin-right: 0px;
+  }
+}

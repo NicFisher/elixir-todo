@@ -1,38 +1,12 @@
 /* This file is for your main application css. */
 @import "tailwindcss/base";
-
 @import "tailwindcss/components";
-
 @import "tailwindcss/utilities";
+@import "boards.scss";
 
 html, body {
   height: 100%;
   background-color: #edf2f7;
-}
-
-.container {
-  margin: 0 auto;
-  padding-top: 1rem;
-  max-width: 80.0rem;
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-#board-lists {
-  overflow-x: auto;
-  overflow-y: hidden;
-
-  .board-list {
-    min-width: 250px;
-    margin: 0 4px;
-  }
-  .board-list:first-child {
-    margin-left: 0px;
-  }
-  .board-list:last-child {
-    margin-right: 0px;
-  }
 }
 
 /* Alerts and form errors */
