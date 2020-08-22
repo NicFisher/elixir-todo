@@ -18,6 +18,7 @@ defmodule Todo.Boards.BoardList do
   def changeset(board, attrs) do
     board
     |> cast(attrs, [:name, :archived, :position])
+    |> validate_number(:position, greater_than: 0)
     |> validate_required([:name, :position])
   end
 end

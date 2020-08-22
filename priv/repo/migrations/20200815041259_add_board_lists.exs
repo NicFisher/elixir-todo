@@ -11,5 +11,9 @@ defmodule Todo.Repo.Migrations.AddBoardLists do
 
       timestamps()
     end
+
+    create constraint("board_lists", :position_must_be_positive, check: "position > 0")
+    create unique_index(:board_lists, :position)
+    create index(:board_lists, :board_id)
   end
 end

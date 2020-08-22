@@ -40,7 +40,7 @@ defmodule Todo.Boards do
   end
 
   @doc """
-  Gets a single board for a user.
+  Gets a single board with the board lists ordered by position for a user.
 
   Raises `Ecto.NoResultsError` if the Board does not exist.
 
@@ -54,25 +54,31 @@ defmodule Todo.Boards do
 
   """
   def get_board!(id, user_id) do
-    Repo.get_by!(Board, id: id, user_id: user_id) |> Repo.preload(:board_lists)
+    Repo.get_by!(Board, id: id, user_id: user_id) |> Repo.preload([board_lists: from(l in BoardList, order_by: l.position)])
   end
 
   @doc """
-  Gets a single board list.
+  Gets a single board list from a board for the user.
 
   Raises `Ecto.NoResultsError` if the Board does not exist.
 
   ## Examples
 
-      iex> get_board_list!(123, 12345678)
+      iex> get_board_list!(123, 456, 789)
       %Board{}
 
-      iex> get_board_list!(456, 12345678)
+      iex> get_board_list!(456, 123, 789)
       ** (Ecto.NoResultsError)
 
   """
-  def get_board_list!(board, board_id) do
-    Repo.get_by!(BoardList, id: board_id, board_id: board.id)
+  def get_board_list!(board_list_id, board_id, user_id) do
+    query = from b in Board,
+    join: bl in BoardList, on: bl.board_id == ^board_id,
+    where: b.id == ^board_id and b.user_id == ^user_id and bl.id == ^board_list_id,
+    select: bl
+
+    Repo.one!(query)
+
   end
 
   @doc """

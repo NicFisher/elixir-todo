@@ -18,14 +18,13 @@ defmodule TodoWeb.BoardListController do
         |> redirect(to: "/boards/#{board_id}")
 
       {:error, _changeset} ->
-        conn |> put_flash(:error, "Oops, something went wrong.") |> new(%{})
+        conn |> put_flash(:error, "Invalid details.") |> new(%{"board_id" => board_id})
     end
   end
 
   def edit(conn, %{"board_id" => board_id, "id" => id}) do
     board_list_changeset =
-      Boards.get_board!(board_id, current_resource(conn).id)
-      |> Boards.get_board_list!(id)
+      Boards.get_board_list!(id, board_id, current_resource(conn).id)
       |> Boards.change_board_list()
 
     render(conn, "edit.html", changeset: board_list_changeset)
@@ -51,8 +50,7 @@ defmodule TodoWeb.BoardListController do
   end
 
   defp update_board_list(conn, attrs, id, board_id) do
-      Boards.get_board!(board_id, current_resource(conn).id)
-      |> Boards.get_board_list!(id)
+      Boards.get_board_list!(id, board_id, current_resource(conn).id)
       |> Boards.update_board_list(attrs)
   end
 
