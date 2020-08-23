@@ -54,7 +54,13 @@ defmodule Todo.Boards do
 
   """
   def get_board!(id, user_id) do
-    Repo.get_by!(Board, id: id, user_id: user_id) |> Repo.preload([board_lists: from(l in BoardList, order_by: l.position)])
+    query = from b in Todo.Boards.Board,
+      join: bl in assoc(b, :board_lists),
+      where: bl.archived == false and b.id == ^id and b.user_id == ^user_id,
+      order_by: bl.position,
+      preload: [board_lists: bl]
+
+    Repo.one!(query)
   end
 
   @doc """
@@ -73,8 +79,8 @@ defmodule Todo.Boards do
   """
   def get_board_list!(board_list_id, board_id, user_id) do
     query = from b in Board,
-    join: bl in BoardList, on: bl.board_id == ^board_id,
-    where: b.id == ^board_id and b.user_id == ^user_id and bl.id == ^board_list_id,
+    join: bl in BoardList, on: bl.board_id == b.id,
+    where: b.id == ^board_id and b.user_id == ^user_id and bl.id == ^board_list_id and bl.archived == false,
     select: bl
 
     Repo.one!(query)
