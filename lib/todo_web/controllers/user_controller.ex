@@ -4,7 +4,7 @@ defmodule TodoWeb.UserController do
 
   def new(conn, _params) do
     case Guardian.Plug.current_resource(conn) do
-      %User{} -> redirect(conn, to: "/protected")
+      %User{} -> redirect(conn, to: "/boards")
       nil -> render(conn, "new.html", changeset: Accounts.change_user(%User{}))
     end
   end
@@ -40,7 +40,7 @@ defmodule TodoWeb.UserController do
       {:ok, _user} ->
         conn
         |> put_flash(:info, "User Updated")
-        |> redirect(to: "/protected")
+        |> redirect(to: "/boards")
 
       {:error, changeset} ->
         conn
@@ -53,7 +53,7 @@ defmodule TodoWeb.UserController do
     conn
     |> put_flash(:info, "Welcome!")
     |> Guardian.Plug.sign_in(user)
-    |> redirect(to: "/protected")
+    |> redirect(to: "/boards")
   end
 
   defp login_user({:error, :invalid_credentials}, conn) do

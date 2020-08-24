@@ -27,7 +27,7 @@ defmodule TodoWeb.SessionControllerTest do
       assert html_response(conn, 200) =~ "Login"
     end
 
-    test "with user returns protected page", %{auth_conn: auth_conn} do
+    test "with user returns boards page", %{auth_conn: auth_conn} do
       Todo.Repo.insert(%User{
         id: "3f10cb63-122e-47f6-b987-2ee0b0e63446",
         email: "email@email.com",
@@ -36,15 +36,15 @@ defmodule TodoWeb.SessionControllerTest do
       })
 
       conn = get(auth_conn, "/login")
-      assert redirected_to(conn) == Routes.page_path(conn, :protected)
+      assert redirected_to(conn) == Routes.board_path(conn, :index)
     end
   end
 
   describe "POST /login" do
-    test "with valid params returns protected page", %{conn: conn} do
+    test "with valid params returns boards page", %{conn: conn} do
       user_fixture()
       conn = post(conn, "/login", user: @valid_attrs)
-      assert redirected_to(conn) == Routes.page_path(conn, :protected)
+      assert redirected_to(conn) == Routes.board_path(conn, :index)
     end
 
     test "with invalid params returns protected page", %{conn: conn} do

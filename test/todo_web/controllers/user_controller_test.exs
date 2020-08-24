@@ -20,7 +20,7 @@ defmodule TodoWeb.UserControllerTest do
       })
 
       conn = get(auth_conn, "users/new")
-      assert redirected_to(conn) == Routes.page_path(conn, :protected)
+      assert redirected_to(conn) == Routes.board_path(conn, :index)
     end
 
     test "without user in session", %{conn: conn} do
@@ -46,7 +46,7 @@ defmodule TodoWeb.UserControllerTest do
       assert new_user.email == "newuser@email.com"
       assert new_user.name == "John Smith"
 
-      assert redirected_to(conn) == Routes.page_path(conn, :protected)
+      assert redirected_to(conn) == Routes.board_path(conn, :index)
     end
 
     test "with matching params but non unqiue email", %{conn: conn} do
