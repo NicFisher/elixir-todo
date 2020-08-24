@@ -13,7 +13,11 @@ defmodule Todo.Repo.Migrations.AddBoardLists do
     end
 
     create constraint("board_lists", :position_must_be_positive, check: "position > 0")
-    create unique_index(:board_lists, [:board_id, :position], name: :board_list_position_and_board_id_unique_index)
+
+    create unique_index(:board_lists, [:board_id, :position],
+             name: :board_list_position_and_board_id_unique_index
+           )
+
     create index(:board_lists, :board_id)
   end
 end

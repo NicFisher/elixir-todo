@@ -11,10 +11,11 @@ defmodule TodoWeb.BoardListControllerTest do
       name: "Joe Bloggs"
     })
 
-    {:ok, board} = Todo.Repo.insert(%Board{
-      name: "First Board",
-      user_id: "3f10cb63-122e-47f6-b987-2ee0b0e63446"
-    })
+    {:ok, board} =
+      Todo.Repo.insert(%Board{
+        name: "First Board",
+        user_id: "3f10cb63-122e-47f6-b987-2ee0b0e63446"
+      })
 
     auth_conn =
       conn
@@ -36,7 +37,8 @@ defmodule TodoWeb.BoardListControllerTest do
   end
 
   describe "POST board list #create" do
-    test "with matching params and user in session creates new board list and redirects to board show", %{auth_conn: auth_conn, board: board} do
+    test "with matching params and user in session creates new board list and redirects to board show",
+         %{auth_conn: auth_conn, board: board} do
       params = %{
         "board_id" => board.id,
         "board_list" => %{
@@ -58,7 +60,10 @@ defmodule TodoWeb.BoardListControllerTest do
       assert redirected_to(conn) == Routes.board_path(conn, :show, board.id)
     end
 
-    test "without valid params and with user in session returns error", %{auth_conn: auth_conn, board: board} do
+    test "without valid params and with user in session returns error", %{
+      auth_conn: auth_conn,
+      board: board
+    } do
       params = %{
         "board_id" => board.id,
         "board_list" => %{
@@ -73,7 +78,10 @@ defmodule TodoWeb.BoardListControllerTest do
       assert html_response(conn, 200) =~ "New Board List"
     end
 
-    test "without valid params and without user in session returns unauthorized error", %{conn: conn, board: board} do
+    test "without valid params and without user in session returns unauthorized error", %{
+      conn: conn,
+      board: board
+    } do
       params = %{
         "board_id" => board.id,
         "board_list" => %{
@@ -88,7 +96,10 @@ defmodule TodoWeb.BoardListControllerTest do
   end
 
   describe "GET board list #edit" do
-    test "with user in session returns edit page with board list in details in fields", %{auth_conn: auth_conn, board: board} do
+    test "with user in session returns edit page with board list in details in fields", %{
+      auth_conn: auth_conn,
+      board: board
+    } do
       {:ok, board_list} =
         Todo.Repo.insert(%BoardList{
           name: "Done",
@@ -119,7 +130,8 @@ defmodule TodoWeb.BoardListControllerTest do
   end
 
   describe "PUT board #edit" do
-    test "with valid params and user in session updates board list and redirects to board show page", %{auth_conn: auth_conn, board: board} do
+    test "with valid params and user in session updates board list and redirects to board show page",
+         %{auth_conn: auth_conn, board: board} do
       {:ok, board_list} =
         Todo.Repo.insert(%BoardList{
           name: "Done",
@@ -150,7 +162,10 @@ defmodule TodoWeb.BoardListControllerTest do
       assert redirected_to(conn) == Routes.board_path(conn, :show, board.id)
     end
 
-    test "with invalid params and user in session returns invalid details error", %{auth_conn: auth_conn, board: board} do
+    test "with invalid params and user in session returns invalid details error", %{
+      auth_conn: auth_conn,
+      board: board
+    } do
       {:ok, board_list} =
         Todo.Repo.insert(%BoardList{
           name: "Done",

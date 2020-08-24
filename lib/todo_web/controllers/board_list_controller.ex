@@ -50,8 +50,8 @@ defmodule TodoWeb.BoardListController do
   end
 
   defp update_board_list(conn, attrs, id, board_id) do
-      Boards.get_board_list!(id, board_id, current_resource(conn).id)
-      |> Boards.update_board_list(attrs)
+    Boards.get_board_list!(id, board_id, current_resource(conn).id)
+    |> Boards.update_board_list(attrs)
   end
 
   defp user_boards(conn) do

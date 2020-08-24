@@ -54,12 +54,13 @@ defmodule Todo.Boards do
 
   """
   def get_board!(id, user_id) do
-    query = from b in Todo.Boards.Board,
-      left_join: bl in Todo.Boards.BoardList,
-      on: b.id == bl.board_id,
-      where: b.id == ^id and b.user_id == ^user_id,
-      order_by: bl.position,
-      preload: [board_lists: bl]
+    query =
+      from b in Todo.Boards.Board,
+        left_join: bl in Todo.Boards.BoardList,
+        on: b.id == bl.board_id,
+        where: b.id == ^id and b.user_id == ^user_id,
+        order_by: bl.position,
+        preload: [board_lists: bl]
 
     Repo.one!(query)
   end
@@ -79,13 +80,16 @@ defmodule Todo.Boards do
 
   """
   def get_board_list!(board_list_id, board_id, user_id) do
-    query = from b in Board,
-    join: bl in BoardList, on: bl.board_id == b.id,
-    where: b.id == ^board_id and b.user_id == ^user_id and bl.id == ^board_list_id and bl.archived == false,
-    select: bl
+    query =
+      from b in Board,
+        join: bl in BoardList,
+        on: bl.board_id == b.id,
+        where:
+          b.id == ^board_id and b.user_id == ^user_id and bl.id == ^board_list_id and
+            bl.archived == false,
+        select: bl
 
     Repo.one!(query)
-
   end
 
   @doc """
