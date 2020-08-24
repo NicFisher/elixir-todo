@@ -5,9 +5,9 @@ defmodule Todo.Accounts.User do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "users" do
-    field :password, :string
-    field :email, :string
-    field :name, :string
+    field :password, :string, null: false
+    field :email, :string, null: false
+    field :name, :string, null: false
     has_many :boards, Todo.Boards.Board
 
     timestamps()
