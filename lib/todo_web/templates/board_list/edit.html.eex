@@ -13,10 +13,7 @@
       </div>
       <div class="mb-4 flex items-center">
         <%= checkbox f, :archived, class: "form-checkbox mr-2 text-gray-600" %>
-
         <%= label f, :archived, class: "text-gray-700 text-sm font-bold" %>
-
-
       </div>
       <div class="flex items-center justify-center">
         <%= submit "Update Account", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" %>
