@@ -1,4 +1,5 @@
 defmodule Todo.Boards.Board do
+  alias Todo.{Accounts.User, Boards.BoardList}
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -7,7 +8,8 @@ defmodule Todo.Boards.Board do
     field :name, :string, null: false
     field :archived, :boolean, default: false
 
-    belongs_to :user, Todo.Accounts.User, foreign_key: :user_id, type: :binary_id
+    belongs_to :user, User, foreign_key: :user_id, type: :binary_id
+    has_many :board_lists, BoardList
 
     timestamps()
   end

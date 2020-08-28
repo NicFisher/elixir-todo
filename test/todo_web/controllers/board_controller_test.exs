@@ -138,7 +138,7 @@ defmodule TodoWeb.BoardControllerTest do
     end
   end
 
-  describe "PATCH board #edit" do
+  describe "PUT board #edit" do
     test "with valid params and user in session", %{auth_conn: auth_conn} do
       {:ok, board} =
         Todo.Repo.insert(%Board{
@@ -198,8 +198,11 @@ defmodule TodoWeb.BoardControllerTest do
         }
       }
 
-      conn = patch(auth_conn, "boards/#{board.id}", params)
-      assert html_response(conn, 200) =~ "First Board"
+      assert_raise Ecto.NoResultsError,
+                   ~r/^expected at least one result but got none in query/,
+                   fn ->
+                     put(auth_conn, "boards/#{board.id}", params)
+                   end
     end
   end
 end
