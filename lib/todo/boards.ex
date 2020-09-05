@@ -6,7 +6,7 @@ defmodule Todo.Boards do
   import Ecto.Query, warn: false
   alias Todo.Repo
 
-  alias Todo.Boards.{Board, BoardList}
+  alias Todo.Boards.{Board, BoardList, BoardLists.BoardListManager}
 
   @doc """
   Returns the list of boards.
@@ -112,25 +112,6 @@ defmodule Todo.Boards do
   end
 
   @doc """
-  Creates a board list for a board.
-
-  ## Examples
-
-      iex> create_board_list(%{field: value}, %Board{})
-      {:ok, %BoardList{}}
-
-      iex> create_board_list(%{field: bad_value}, %Board{})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_board_list(attrs \\ %{}, board) do
-    board
-    |> Ecto.build_assoc(:board_lists)
-    |> BoardList.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  @doc """
   Updates a board.
 
   ## Examples
@@ -149,6 +130,22 @@ defmodule Todo.Boards do
   end
 
   @doc """
+  Creates a board list for a board.
+
+  ## Examples
+
+      iex> create_board_list(%{field: value}, %Board{})
+      {:ok, %BoardList{}}
+
+      iex> create_board_list(%{field: bad_value}, %Board{})
+      {:error, "error message"}
+
+  """
+  def create_board_list(attrs \\ %{}, board) do
+    BoardListManager.create(attrs, board)
+  end
+
+  @doc """
   Updates a board list.
 
   ## Examples
@@ -161,9 +158,7 @@ defmodule Todo.Boards do
 
   """
   def update_board_list(%BoardList{} = board_list, attrs) do
-    board_list
-    |> BoardList.changeset(attrs)
-    |> Repo.update()
+    BoardListManager.update(attrs, board_list)
   end
 
   @doc """
