@@ -1,7 +1,7 @@
 defmodule Todo.Boards.BoardLists.BoardListManager do
-  import Ecto.Query
   alias Ecto.Multi
-  alias Todo.Boards.{BoardList, Board}
+  alias Todo.Boards.BoardList
+  alias Todo.Boards.BoardLists.BoardListPositions
   alias Todo.Repo
 
   @type attrs :: %{
@@ -63,7 +63,7 @@ defmodule Todo.Boards.BoardLists.BoardListManager do
        ) do
     Multi.new()
     |> Multi.run(:board_list_positions, fn _repo, _changes ->
-      update_board_list_positions(updated_position, current_position, board_id)
+      BoardListPositions.reorder(updated_position, current_position, board_id)
     end)
     |> Multi.update(:board_list, board_list_changeset)
     |> Repo.transaction()
@@ -72,25 +72,9 @@ defmodule Todo.Boards.BoardLists.BoardListManager do
   defp insert_board_list_and_positions(board_list_changeset, position, board_id) do
     Multi.new()
     |> Multi.run(:board_list_positions, fn _repo, _changes ->
-      update_board_list_positions(position, nil, board_id)
+      BoardListPositions.reorder(position, nil, board_id)
     end)
     |> Multi.insert(:board_list, board_list_changeset)
-    |> Repo.transaction()
-  end
-
-  defp update_board_list_positions(updated_position, existing_position, _board_id)
-       when updated_position == existing_position do
-    {:ok, :skip}
-  end
-
-  defp update_board_list_positions(updated_position, _exisiting_position, board_id) do
-    query =
-      from bl in BoardList,
-        where: bl.position >= ^updated_position and bl.board_id == ^board_id,
-        update: [set: [position: bl.position + 1]]
-
-    Multi.new()
-    |> Multi.update_all(:board_list_positions, query, [])
     |> Repo.transaction()
   end
 
