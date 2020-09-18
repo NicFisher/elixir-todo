@@ -1,6 +1,6 @@
 defmodule Todo.Boards.BoardLists.BoardListManager do
   alias Ecto.Multi
-  alias Todo.Boards.BoardList
+  alias Todo.Boards.{BoardList, Board}
   alias Todo.Boards.BoardLists.BoardListPositions
   alias Todo.Repo
 
@@ -9,7 +9,7 @@ defmodule Todo.Boards.BoardLists.BoardListManager do
   the positions of the other board lists on that board will be re-ordered if required.
   """
 
-  # @spec create(%{}, %Board{}) :: {:ok %BoardList{}} | {:error, String.t}
+  @spec create(%{}, %Board{}) :: {:ok, %BoardList{}} | {:error, String.t}
   def create(%{"position" => position} = attrs, board) do
     with %{valid?: true} = board_list_changeset <- insert_bl_changeset(attrs, board),
          position <- String.to_integer(position),
@@ -20,12 +20,12 @@ defmodule Todo.Boards.BoardLists.BoardListManager do
       %{valid?: false} ->
         {:error, "Invalid details"}
 
-      {:error, _} ->
+      _error ->
         {:error, "Unable to create board list"}
     end
   end
 
-  # @spec update(%{}, %BoardList{}) :: {:ok %BoardList{}} | {:error, String.t} | {:error, %Ecto.Changeset{}}
+  @spec update(%{}, %BoardList{}) :: {:ok, %BoardList{}} | {:error, String.t} | {:error, %Ecto.Changeset{}}
   def update(
         %{"position" => updated_position} = attrs,
         %BoardList{board_id: board_id, position: current_position} = board_list
@@ -44,7 +44,7 @@ defmodule Todo.Boards.BoardLists.BoardListManager do
       %{valid?: false} = changeset ->
         {:error, changeset}
 
-      {:error, _} ->
+      _error ->
         {:error, "Unable to create board list"}
     end
   end

@@ -4,6 +4,9 @@ defmodule Todo.Boards.BoardLists.BoardListPositions do
   alias Todo.Boards.{BoardList}
   alias Todo.Repo
 
+  defguard is_equal(value1, value2) when value1 == value2 and is_integer(value1) and is_integer(value2)
+  defguard is_greater_than(value1, value2) when value1 > value2 and is_integer(value1) and is_integer(value2)
+
   @moduledoc """
   This modules handles updating the board positions. These are the cases handled:
   - If the updated position and current position are the same, no action is required
@@ -18,7 +21,7 @@ defmodule Todo.Boards.BoardLists.BoardListPositions do
   """
 
   def reorder(updated_position, current_position, _board_id)
-      when updated_position == current_position do
+      when is_equal(updated_position, current_position) do
     Multi.new()
   end
 
@@ -37,7 +40,7 @@ defmodule Todo.Boards.BoardLists.BoardListPositions do
   end
 
   defp update_positions(updated_position, current_position, board_id)
-      when current_position < updated_position do
+      when is_greater_than(updated_position, current_position)  do
     query =
       from bl in BoardList,
         where:
@@ -50,7 +53,7 @@ defmodule Todo.Boards.BoardLists.BoardListPositions do
   end
 
   defp update_positions(updated_position, current_position, board_id)
-      when updated_position < current_position  do
+      when is_greater_than(current_position, updated_position) do
     query =
       from bl in BoardList,
         where:
