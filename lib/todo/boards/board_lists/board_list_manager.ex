@@ -92,8 +92,9 @@ defmodule Todo.Boards.BoardLists.BoardListManager do
       when updated_position == current_position,
       do: attrs
 
-  # this will compare the highest list position with the updated attrs position and change the attrs if it is great than the highest position + 1.
-  # E.g. if updated_position is 10, but the highest list position is 5, then the attrs position will be changed to 6. All other cases will return orginal attrs.
+  # this will compare the highest list position with the updated position. If the updated_position is greater than the highest list position plus 1,
+  # it will update the position in the attrs to highest list position + 1. E.g. if updated_position is 10, but the highest list position is 5,
+  # then the attrs position will be changed to 6. All other cases will return original attrs.
   def validate_updated_list_position(attrs, board_id, updated_position, _current_position) do
     query =
       from bl in BoardList,

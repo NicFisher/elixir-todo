@@ -178,7 +178,7 @@ defmodule TodoWeb.BoardListControllerTest do
         "board_id" => board.id,
         "board_list" => %{
           "name" => "",
-          "position" => 3,
+          "position" => "3",
           "archived" => false
         }
       }
@@ -200,7 +200,7 @@ defmodule TodoWeb.BoardListControllerTest do
         "board_id" => board.id,
         "board_list" => %{
           "name" => "New Name",
-          "position" => 3,
+          "position" => "3",
           "archived" => false
         }
       }
