@@ -20,11 +20,8 @@ defmodule Todo.Boards.BoardLists.BoardListManagerTest do
     {:ok, user} = create_user("nic@hello")
     {:ok, board} = create_board(user, "First Board")
 
-
     {:ok,
-     board: board,
-     valid_attributes: valid_attributes,
-     invalid_attributes: invalid_attributes}
+     board: board, valid_attributes: valid_attributes, invalid_attributes: invalid_attributes}
   end
 
   describe "create" do
@@ -239,27 +236,21 @@ defmodule Todo.Boards.BoardLists.BoardListManagerTest do
       assert fourth_board_list.name == "Fourth Board List"
     end
 
-    test "reorders boards lists and leaves no gaps between positions", %{board: board} do
+    test "cannot update list with position greater than the highest position + 1", %{board: board} do
       {:ok, board_list_1} = create_board_list(board, "First Board List", "1")
       {:ok, _board_list_2} = create_board_list(board, "Second Board List", "2")
       {:ok, _board_list_3} = create_board_list(board, "Third Board List", "3")
 
       attributes = %{
         "name" => "Updated First Board List",
-        "position" => "4",
+        "position" => "6",
         "archived" => false
       }
 
-      # move board_list_1 to position 4
-      {:ok, _board_list} = BoardListManager.update(attributes, board_list_1)
+      # move board_list_1 to position 6 when max list position is 3
+      {:ok, board_list} = BoardListManager.update(attributes, board_list_1)
 
-      first_board_list = Todo.Repo.get_by(BoardList, position: 1)
-      second_board_list = Todo.Repo.get_by(BoardList, position: 2)
-      third_board_list = Todo.Repo.get_by(BoardList, position: 3)
-
-      assert first_board_list.name == "Second Board List"
-      assert second_board_list.name == "Third Board List"
-      assert third_board_list.name == "Updated First Board List"
+      assert board_list.position == 4
     end
   end
 
