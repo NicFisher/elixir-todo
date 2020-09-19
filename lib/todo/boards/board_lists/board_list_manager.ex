@@ -1,7 +1,7 @@
 defmodule Todo.Boards.BoardLists.BoardListManager do
   alias Ecto.Multi
   alias Todo.Boards.{Board, BoardList}
-  alias Todo.Boards.BoardLists.BoardListPositions
+  alias Todo.Boards.BoardLists.Positions
   alias Todo.Repo
   import Ecto.Query
 
@@ -62,7 +62,7 @@ defmodule Todo.Boards.BoardLists.BoardListManager do
        ) do
     Multi.new()
     |> Multi.merge(fn _ ->
-      BoardListPositions.reorder(updated_position, current_position, board_id)
+      Positions.reorder(updated_position, current_position, board_id)
     end)
     |> Multi.update(:board_list, board_list_changeset)
     |> Repo.transaction()
@@ -71,7 +71,7 @@ defmodule Todo.Boards.BoardLists.BoardListManager do
   defp insert_board_list_and_positions(board_list_changeset, position, board_id) do
     Multi.new()
     |> Multi.merge(fn _ ->
-      BoardListPositions.reorder(position, nil, board_id)
+      Positions.reorder(position, nil, board_id)
     end)
     |> Multi.insert(:board_list, board_list_changeset)
     |> Repo.transaction()

@@ -1,27 +1,14 @@
 defmodule Todo.Boards.BoardLists.BoardListManagerTest do
   use Todo.DataCase
-  alias Todo.Boards.{BoardList, Board}
-  alias Todo.Accounts.User
+  alias Todo.Boards.BoardList
   alias Todo.Boards.BoardLists.BoardListManager
+  alias Todo.Factory
 
   setup do
-    valid_attributes = %{
-      "name" => "New Board List Numero Uno",
-      "position" => "1",
-      "archived" => false
-    }
+    {:ok, user} = Factory.create_user("nic@hello")
+    {:ok, board} = Factory.create_board(user, "First Board")
 
-    invalid_attributes = %{
-      "name" => "",
-      "position" => "1",
-      "archived" => false
-    }
-
-    {:ok, user} = create_user("nic@hello")
-    {:ok, board} = create_board(user, "First Board")
-
-    {:ok,
-     board: board, valid_attributes: valid_attributes, invalid_attributes: invalid_attributes}
+    {:ok, board: board}
   end
 
   describe "create" do
@@ -50,9 +37,8 @@ defmodule Todo.Boards.BoardLists.BoardListManagerTest do
       assert Todo.Repo.aggregate(BoardList, :count) == 1
     end
 
-    # @tag :skip
     test "reorders board lists when board list is in the same position", %{board: board} do
-      create_board_list(board, "Board List", "1")
+      Factory.create_board_list(board, "Board List", "1")
 
       attributes = %{
         "name" => "New First Board List",
@@ -69,10 +55,9 @@ defmodule Todo.Boards.BoardLists.BoardListManagerTest do
       assert Todo.Repo.aggregate(BoardList, :count) == 2
     end
 
-    # @tag :skip
     test "reorders boards lists and leaves no gaps between positions", %{board: board} do
-      create_board_list(board, "First Board List", "1")
-      create_board_list(board, "Second Board List", "2")
+      Factory.create_board_list(board, "First Board List", "1")
+      Factory.create_board_list(board, "Second Board List", "2")
 
       attributes = %{
         "name" => "New Board List",
@@ -85,11 +70,10 @@ defmodule Todo.Boards.BoardLists.BoardListManagerTest do
       assert board_list.position == 3
     end
 
-    # @tag :skip
     test "reorders boards lists when multiple board lists exist", %{board: board} do
-      create_board_list(board, "First Board List", "1")
-      create_board_list(board, "Second Board List", "2")
-      create_board_list(board, "Third Board List", "3")
+      Factory.create_board_list(board, "First Board List", "1")
+      Factory.create_board_list(board, "Second Board List", "2")
+      Factory.create_board_list(board, "Third Board List", "3")
 
       attributes = %{
         "name" => "New Third Board List",
@@ -111,7 +95,7 @@ defmodule Todo.Boards.BoardLists.BoardListManagerTest do
 
   describe "update" do
     test "does not accept invalid attributes", %{board: board} do
-      {:ok, board_list} = create_board_list(board, "First Board List", "1")
+      {:ok, board_list} = Factory.create_board_list(board, "First Board List", "1")
 
       invalid_attributes = %{
         "name" => "",
@@ -125,7 +109,7 @@ defmodule Todo.Boards.BoardLists.BoardListManagerTest do
     end
 
     test "updates board list with valid attributes", %{board: board} do
-      {:ok, board_list} = create_board_list(board, "First Board List", "1")
+      {:ok, board_list} = Factory.create_board_list(board, "First Board List", "1")
 
       attributes = %{
         "name" => "Updated Name",
@@ -139,9 +123,9 @@ defmodule Todo.Boards.BoardLists.BoardListManagerTest do
     end
 
     test "reorders board lists when board list position decreased", %{board: board} do
-      {:ok, _board_list_1} = create_board_list(board, "First Board List", "1")
-      {:ok, _board_list_2} = create_board_list(board, "Second Board List", "2")
-      {:ok, board_list_3} = create_board_list(board, "Third Board List", "3")
+      {:ok, _board_list_1} = Factory.create_board_list(board, "First Board List", "1")
+      {:ok, _board_list_2} = Factory.create_board_list(board, "Second Board List", "2")
+      {:ok, board_list_3} = Factory.create_board_list(board, "Third Board List", "3")
 
       attributes = %{
         "name" => "Updated Third Board List",
@@ -162,9 +146,9 @@ defmodule Todo.Boards.BoardLists.BoardListManagerTest do
     end
 
     test "reorders board lists when board list position increased", %{board: board} do
-      {:ok, _board_list_1} = create_board_list(board, "First Board List", "1")
-      {:ok, board_list_2} = create_board_list(board, "Second Board List", "2")
-      {:ok, _board_list_3} = create_board_list(board, "Third Board List", "3")
+      {:ok, _board_list_1} = Factory.create_board_list(board, "First Board List", "1")
+      {:ok, board_list_2} = Factory.create_board_list(board, "Second Board List", "2")
+      {:ok, _board_list_3} = Factory.create_board_list(board, "Third Board List", "3")
 
       attributes = %{
         "name" => "Updated Second Board List",
@@ -185,10 +169,10 @@ defmodule Todo.Boards.BoardLists.BoardListManagerTest do
     end
 
     test "reorders board lists when board list position increased by multiple", %{board: board} do
-      {:ok, board_list_1} = create_board_list(board, "First Board List", "1")
-      {:ok, _board_list_2} = create_board_list(board, "Second Board List", "2")
-      {:ok, _board_list_3} = create_board_list(board, "Third Board List", "3")
-      {:ok, _board_list_4} = create_board_list(board, "Fourth Board List", "4")
+      {:ok, board_list_1} = Factory.create_board_list(board, "First Board List", "1")
+      {:ok, _board_list_2} = Factory.create_board_list(board, "Second Board List", "2")
+      {:ok, _board_list_3} = Factory.create_board_list(board, "Third Board List", "3")
+      {:ok, _board_list_4} = Factory.create_board_list(board, "Fourth Board List", "4")
 
       attributes = %{
         "name" => "Updated First Board List",
@@ -211,10 +195,10 @@ defmodule Todo.Boards.BoardLists.BoardListManagerTest do
     end
 
     test "reorders board lists when board list position decreased by multiple", %{board: board} do
-      {:ok, _board_list_1} = create_board_list(board, "First Board List", "1")
-      {:ok, _board_list_2} = create_board_list(board, "Second Board List", "2")
-      {:ok, board_list_3} = create_board_list(board, "Third Board List", "3")
-      {:ok, _board_list_4} = create_board_list(board, "Fourth Board List", "4")
+      {:ok, _board_list_1} = Factory.create_board_list(board, "First Board List", "1")
+      {:ok, _board_list_2} = Factory.create_board_list(board, "Second Board List", "2")
+      {:ok, board_list_3} = Factory.create_board_list(board, "Third Board List", "3")
+      {:ok, _board_list_4} = Factory.create_board_list(board, "Fourth Board List", "4")
 
       attributes = %{
         "name" => "Updated Third Board List",
@@ -237,9 +221,9 @@ defmodule Todo.Boards.BoardLists.BoardListManagerTest do
     end
 
     test "cannot update list with position greater than the highest position + 1", %{board: board} do
-      {:ok, board_list_1} = create_board_list(board, "First Board List", "1")
-      {:ok, _board_list_2} = create_board_list(board, "Second Board List", "2")
-      {:ok, _board_list_3} = create_board_list(board, "Third Board List", "3")
+      {:ok, board_list_1} = Factory.create_board_list(board, "First Board List", "1")
+      {:ok, _board_list_2} = Factory.create_board_list(board, "Second Board List", "2")
+      {:ok, _board_list_3} = Factory.create_board_list(board, "Third Board List", "3")
 
       attributes = %{
         "name" => "Updated First Board List",
@@ -252,37 +236,5 @@ defmodule Todo.Boards.BoardLists.BoardListManagerTest do
 
       assert board_list.position == 4
     end
-  end
-
-  defp create_user(email) do
-    %User{}
-    |> User.changeset(%{
-      email: email,
-      name: "Joe Bloggs",
-      password: "password"
-    })
-    |> Repo.insert()
-  end
-
-  defp create_board(user, board_name) do
-    user
-    |> Ecto.build_assoc(:boards)
-    |> Board.changeset(%{
-      user: user,
-      name: board_name,
-      archived: false
-    })
-    |> Repo.insert()
-  end
-
-  defp create_board_list(board, board_list_name, position) do
-    board
-    |> Ecto.build_assoc(:board_lists)
-    |> BoardList.changeset(%{
-      name: board_list_name,
-      position: position,
-      archived: false
-    })
-    |> Repo.insert()
   end
 end

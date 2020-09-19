@@ -1,11 +1,14 @@
-defmodule Todo.Boards.BoardLists.BoardListPositions do
+defmodule Todo.Boards.BoardLists.Positions do
   import Ecto.Query
   alias Ecto.Multi
   alias Todo.Boards.{BoardList}
   alias Todo.Repo
 
-  defguard is_equal(value1, value2) when value1 == value2 and is_integer(value1) and is_integer(value2)
-  defguard is_greater_than(value1, value2) when value1 > value2 and is_integer(value1) and is_integer(value2)
+  defguard is_equal(value1, value2)
+           when value1 == value2 and is_integer(value1) and is_integer(value2)
+
+  defguard is_greater_than(value1, value2)
+           when value1 > value2 and is_integer(value1) and is_integer(value2)
 
   @moduledoc """
   This modules handles updating the board positions. These are the cases handled:
@@ -20,6 +23,7 @@ defmodule Todo.Boards.BoardLists.BoardListPositions do
   - All other cases will increase the positions of the lists greater than the updated position
   """
 
+  @spec reorder(Integer.t(), Integer.t(), Integer.t()) :: Multi.t()
   def reorder(updated_position, current_position, _board_id)
       when is_equal(updated_position, current_position) do
     Multi.new()
@@ -40,12 +44,12 @@ defmodule Todo.Boards.BoardLists.BoardListPositions do
   end
 
   defp update_positions(updated_position, current_position, board_id)
-      when is_greater_than(updated_position, current_position)  do
+       when is_greater_than(updated_position, current_position) do
     query =
       from bl in BoardList,
         where:
           bl.board_id == ^board_id and
-          bl.position <= ^updated_position and bl.position > ^current_position,
+            bl.position <= ^updated_position and bl.position > ^current_position,
         update: [set: [position: bl.position - 1]]
 
     Multi.new()
@@ -53,12 +57,12 @@ defmodule Todo.Boards.BoardLists.BoardListPositions do
   end
 
   defp update_positions(updated_position, current_position, board_id)
-      when is_greater_than(current_position, updated_position) do
+       when is_greater_than(current_position, updated_position) do
     query =
       from bl in BoardList,
         where:
           bl.board_id == ^board_id and
-          bl.position >= ^updated_position and bl.position < ^current_position,
+            bl.position >= ^updated_position and bl.position < ^current_position,
         update: [set: [position: bl.position + 1]]
 
     Multi.new()
