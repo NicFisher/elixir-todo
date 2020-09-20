@@ -1,5 +1,5 @@
-<div class="flex w-full max-w-xs p-4 bg-white rounded-md board-list">
-  <ul class="flex flex-col w-full">
+<div class="flex w-full max-w-xs p-4 bg-white rounded-md board-list flex-col">
+  <ul class="flex flex-col w-full mb-4">
     <li class="my-px">
     <%= link to: Routes.board_list_path(@conn, :edit, @board_list.board_id, @board_list.id), method: :get do %>
       <div class="flex flex-row items-center font-semibold h-12 p-4 rounded-lg text-gray-600 bg-gray-100">
@@ -31,4 +31,9 @@
       </div>
     </li>
   </ul>
+  <a class="cursor-pointer">
+  <div class="flex font-semibold h-12 p-4 rounded-lg text-gray-600 bg-gray-100 items-center">
+    + Add a card
+  </div>
+  </a>
 </div>
