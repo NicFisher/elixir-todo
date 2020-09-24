@@ -43,7 +43,7 @@ defmodule TodoWeb.BoardListControllerTest do
         "board_id" => board.id,
         "board_list" => %{
           "name" => "Doing",
-          "position" => 1,
+          "position" => "1",
           "archived" => false
         }
       }
@@ -67,14 +67,14 @@ defmodule TodoWeb.BoardListControllerTest do
       params = %{
         "board_id" => board.id,
         "board_list" => %{
-          "position" => 1,
+          "position" => "1",
           "archived" => false
         }
       }
 
       conn = post(auth_conn, "boards/#{board.id}/board-list", params)
 
-      assert html_response(conn, 200) =~ "Invalid details."
+      assert html_response(conn, 200) =~ "Invalid details"
       assert html_response(conn, 200) =~ "New Board List"
     end
 
@@ -85,7 +85,7 @@ defmodule TodoWeb.BoardListControllerTest do
       params = %{
         "board_id" => board.id,
         "board_list" => %{
-          "position" => 1,
+          "position" => "1",
           "archived" => false
         }
       }
@@ -144,7 +144,7 @@ defmodule TodoWeb.BoardListControllerTest do
         "board_id" => board.id,
         "board_list" => %{
           "name" => "Done",
-          "position" => 3,
+          "position" => "3",
           "archived" => false
         }
       }
@@ -178,7 +178,7 @@ defmodule TodoWeb.BoardListControllerTest do
         "board_id" => board.id,
         "board_list" => %{
           "name" => "",
-          "position" => 3,
+          "position" => "3",
           "archived" => false
         }
       }
@@ -200,7 +200,7 @@ defmodule TodoWeb.BoardListControllerTest do
         "board_id" => board.id,
         "board_list" => %{
           "name" => "New Name",
-          "position" => 3,
+          "position" => "3",
           "archived" => false
         }
       }

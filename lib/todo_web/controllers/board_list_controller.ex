@@ -12,13 +12,13 @@ defmodule TodoWeb.BoardListController do
     board = Boards.get_board!(board_id, current_resource(conn).id)
 
     case Boards.create_board_list(board_list, board) do
-      {:ok, _board} ->
+      {:ok, _multi} ->
         conn
         |> put_flash(:info, "New Board List Created")
         |> redirect(to: "/boards/#{board_id}")
 
-      {:error, _changeset} ->
-        conn |> put_flash(:error, "Invalid details.") |> new(%{"board_id" => board_id})
+      {:error, error} ->
+        conn |> put_flash(:error, error) |> new(%{"board_id" => board_id})
     end
   end
 
@@ -45,16 +45,12 @@ defmodule TodoWeb.BoardListController do
       {:error, _error} ->
         conn
         |> put_flash(:error, "Oops, something went wrong.")
-        |> render("index.html", boards: user_boards(conn))
+        |> redirect(to: "/boards/#{board_id}")
     end
   end
 
   defp update_board_list(conn, attrs, id, board_id) do
     Boards.get_board_list!(id, board_id, current_resource(conn).id)
     |> Boards.update_board_list(attrs)
-  end
-
-  defp user_boards(conn) do
-    Boards.list_boards_for_user(current_resource(conn).id)
   end
 end
