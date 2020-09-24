@@ -19,7 +19,6 @@ defmodule Todo.Boards.BoardList do
     board
     |> cast(attrs, [:name, :archived, :position])
     |> validate_number(:position, greater_than: 0)
-    |> unique_constraint(:unique_position, name: :board_list_position_and_board_id_unique_index)
     |> validate_required([:name, :position])
   end
 end
