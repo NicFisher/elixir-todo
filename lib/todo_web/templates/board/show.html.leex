@@ -1,0 +1,18 @@
+<div class="flex items-center flex-col mb-16">
+  <h2 class="text-gray-800 text-3xl font-semibold my-6"><%= assigns.board.name %></h2>
+  <div class="flex">
+    <%= link "Edit Board", to: Routes.board_path(assigns.socket, :edit, assigns.board.id), method: :get, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" %>
+    <%= form_for assigns.changeset, Routes.board_path(assigns.socket, :update, assigns.board.id), fn f -> %>
+      <%= hidden_input f, :archived, value: true %>
+      <%= submit "Archive Board", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2" %>
+    <% end %>
+    <%= link "Add New List", to: Routes.board_list_path(assigns.socket, :new, assigns.board.id), method: :get, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+  </div>
+</div>
+<div class="w-full h-full px-6">
+  <div class="flex h-full" id="board-lists">
+    <%= for board_list <- assigns.board.board_lists do %>
+      <%= live_component @socket, BoardListComponent, board_list: board_list %>
+    <% end %>
+  </div>
+</div>

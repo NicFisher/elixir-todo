@@ -3,6 +3,7 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 @import "boards.scss";
+@import "../../deps/phoenix_live_view/assets/css/live_view.css";
 
 html, body {
   height: 100%;
