@@ -6,7 +6,7 @@ defmodule Todo.Boards do
   import Ecto.Query, warn: false
   alias Todo.Repo
 
-  alias Todo.Boards.{Board, BoardList, BoardLists.BoardListManager}
+  alias Todo.Boards.{Board, BoardList, BoardLists.BoardListManager, Card}
 
   @doc """
   Returns the list of boards.
@@ -185,5 +185,18 @@ defmodule Todo.Boards do
   """
   def change_board_list(%BoardList{} = board_list, attrs \\ %{}) do
     BoardList.changeset(board_list, attrs)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking card changes.
+
+  ## Examples
+
+      iex> change_card(card)
+      %Ecto.Changeset{data: %Card{}}
+
+  """
+  def change_card(%Card{} = card, attrs \\ %{}) do
+    Card.changeset(card, attrs)
   end
 end

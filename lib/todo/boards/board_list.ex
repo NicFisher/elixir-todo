@@ -1,5 +1,5 @@
 defmodule Todo.Boards.BoardList do
-  alias Todo.Boards.Board
+  alias Todo.Boards.{Board, Card}
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -10,6 +10,7 @@ defmodule Todo.Boards.BoardList do
     field :position, :integer, null: false
 
     belongs_to :board, Board, foreign_key: :board_id, type: :binary_id
+    has_many :cards, Card
 
     timestamps()
   end
