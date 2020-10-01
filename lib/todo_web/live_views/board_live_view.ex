@@ -13,6 +13,6 @@ defmodule TodoWeb.BoardLiveView do
     board = Todo.Boards.get_board!(id, user.id)
     changeset = Todo.Boards.change_board(board)
 
-    {:ok, assign(socket, board: board, changeset: changeset)}
+    {:ok, assign(socket, board: board, user: user, changeset: changeset)}
   end
 end

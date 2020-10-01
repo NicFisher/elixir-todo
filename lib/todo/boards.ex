@@ -162,6 +162,25 @@ defmodule Todo.Boards do
   end
 
   @doc """
+  Creates a card for a board list.
+
+  ## Examples
+
+      iex> create_card(%{field: value}, %BoardList{})
+      {:ok, %Board{}}
+
+      iex> create_card(%{field: bad_value}, %BoardList{})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_card(attrs \\ %{}, board_list) do
+    board_list
+    |> Ecto.build_assoc(:cards)
+    |> Card.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
   Returns an `%Ecto.Changeset{}` for tracking board changes.
 
   ## Examples

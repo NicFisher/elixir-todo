@@ -32,12 +32,9 @@
     </li>
   </ul>
   <a class="cursor-pointer">
-    <div class="flex font-semibold h-12 p-4 rounded-lg text-gray-600 bg-gray-100 items-center">
+    <div phx-click="display-new-list-modal" phx-value-id="new-card-modal" phx-value-user-id="<%= assigns.user_id %>" phx-target="<%= @myself %>" class="flex font-semibold h-12 p-4 rounded-lg text-gray-600 bg-gray-100 items-center">
       + Add a card
     </div>
   </a>
-  <%= live_component @socket, TodoWeb.NewCardComponent, id: "new-card-modal" %>
-  <button phx-click="display-new-list-modal" phx-value-id="123" type="button" phx-target="<%= @myself %>" class="inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-50 active:text-gray-800 transition ease-in-out duration-150">
-    Open modal one
-  </button>
+  <%= live_component @socket, TodoWeb.NewCardComponent, id: "new-card-modal", user_id: assigns.user_id, board_list: assigns.board_list %>
 </div>
