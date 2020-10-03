@@ -56,11 +56,12 @@ defmodule Todo.Boards do
   def get_board!(id, user_id) do
     query =
       from b in Todo.Boards.Board,
-        left_join: bl in Todo.Boards.BoardList,
-        on: b.id == bl.board_id,
         where: b.id == ^id and b.user_id == ^user_id,
+        left_join: bl in assoc(b, :board_lists),
+        left_join: cards in assoc(bl, :cards),
         order_by: bl.position,
-        preload: [board_lists: bl]
+        preload: [board_lists: {bl, cards: cards}]
+
 
     Repo.one!(query)
   end

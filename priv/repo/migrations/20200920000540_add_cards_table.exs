@@ -9,6 +9,7 @@ defmodule Todo.Repo.Migrations.AddCardsTable do
       add :archived, :boolean, default: false
       add :due_date, :date
       add :board_list_id, references(:board_lists, type: :uuid), null: false
+      add :board_id, references(:boards, type: :uuid), null: false
 
       timestamps()
     end

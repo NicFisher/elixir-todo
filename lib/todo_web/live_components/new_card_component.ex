@@ -2,7 +2,7 @@ defmodule TodoWeb.NewCardComponent do
   use Phoenix.LiveComponent
   use Phoenix.LiveView
   alias Todo.Boards
-  alias Todo.Boards.Card
+  alias Todo.Boards.{Card, BoardList}
 
   def render(assigns) do
     Phoenix.View.render(TodoWeb.CardView, "new_card_modal.html", assigns)
@@ -24,10 +24,8 @@ defmodule TodoWeb.NewCardComponent do
     {:noreply, assign(socket, :modal_state, "hidden")}
   end
 
-  def handle_event("create", %{"card" => %{"description" => description, "name" => name}}, socket) do
-
-    {:ok, card} = Todo.Boards.create_card(%{"description" => description, "name" => name}, socket.assigns.board_list)
-    # require IEx; IEx.pry
+  def handle_event("create", %{"card" => %{"description" => description, "name" => name}}, %{assigns: %{board_list: board_list} } = socket) do
+    {:ok, card} = Todo.Boards.create_card(%{"description" => description, "name" => name, "board_id" => board_list.board_id}, board_list)
 
     {:noreply, assign(socket, :modal_state, "hidden")}
   end
