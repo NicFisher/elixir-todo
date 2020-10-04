@@ -4,32 +4,12 @@
     <%= link to: Routes.board_list_path(assigns.socket, :edit, assigns.board_list.board_id, assigns.board_list.id), method: :get do %>
       <div class="flex flex-row items-center font-semibold h-12 p-4 rounded-lg text-gray-600 bg-gray-100">
         <span><%= @board_list.name %></span>
-        <span class="flex items-center justify-center text-sm text-gray-500 font-semibold bg-gray-200 h-6 px-2 rounded-full ml-auto">0</span>
+        <span class="flex items-center justify-center text-sm text-gray-500 font-semibold bg-gray-200 h-6 px-2 rounded-full ml-auto"><%= Enum.count(@board_list.cards) %></span>
       </div>
     <% end %>
     </li>
     <div class="border-b-2 mt-3 mb-5"></div>
-    <li>
-      <div class="border-2 border-gray-200 rounded-lg bg-white mx-auto m-1 p-4 notification-box break-normal">
-        <span class="float-right">
-          <svg
-            class="fill-current text-gray-600"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="22"
-            height="22"
-          >
-            <path
-              class="heroicon-ui"
-              d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"
-            />
-          </svg>
-        </span>
-        <div class="text-sm text-gray-800">
-          Example card title
-        </div>
-      </div>
-    </li>
+    <%= live_component @socket, TodoWeb.CardComponent, id: "new-card-modal", user_id: assigns.user_id, cards: @board_list.cards %>
   </ul>
   <a class="cursor-pointer">
     <div phx-click="display-new-list-modal" phx-value-id="new-card-modal" phx-value-user-id="<%= assigns.user_id %>" phx-target="<%= @myself %>" class="flex font-semibold h-12 p-4 rounded-lg text-gray-600 bg-gray-100 items-center">
