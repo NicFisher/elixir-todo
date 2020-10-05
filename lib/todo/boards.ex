@@ -40,7 +40,7 @@ defmodule Todo.Boards do
   end
 
   @doc """
-  Gets a single board with the board lists ordered by position for a user.
+  Gets a single board with the board lists and cards for a user. The board lists are ordered by board_list position.
 
   Raises `Ecto.NoResultsError` if the Board does not exist.
 
@@ -55,12 +55,12 @@ defmodule Todo.Boards do
   """
   def get_board!(id, user_id) do
     query =
-      from b in Todo.Boards.Board,
-        where: b.id == ^id and b.user_id == ^user_id,
-        left_join: bl in assoc(b, :board_lists),
-        left_join: cards in assoc(bl, :cards),
-        order_by: bl.position,
-        preload: [board_lists: {bl, cards: cards}]
+      from board in Todo.Boards.Board,
+        where: board.id == ^id and board.user_id == ^user_id,
+        left_join: board_lists in assoc(board, :board_lists),
+        left_join: cards in assoc(board_lists, :cards),
+        order_by: [asc: board_lists.position, desc: cards.inserted_at],
+        preload: [board_lists: {board_lists, cards: cards}]
 
 
     Repo.one!(query)
@@ -167,10 +167,10 @@ defmodule Todo.Boards do
 
   ## Examples
 
-      iex> create_card(%{field: value}, %BoardList{})
+      iex> create_card(%{field: value}, %Card{})
       {:ok, %Board{}}
 
-      iex> create_card(%{field: bad_value}, %BoardList{})
+      iex> create_card(%{field: bad_value}, %Card{})
       {:error, %Ecto.Changeset{}}
 
   """

@@ -9,12 +9,10 @@
     <% end %>
     </li>
     <div class="border-b-2 mt-3 mb-5"></div>
-    <%= live_component @socket, TodoWeb.CardComponent, id: "new-card-modal", user_id: assigns.user_id, cards: @board_list.cards %>
+    <%= live_component @socket, TodoWeb.CardsComponent, id: "cards-component", cards: @board_list.cards %>
   </ul>
-  <a class="cursor-pointer">
-    <div phx-click="display-new-list-modal" phx-value-id="new-card-modal" phx-value-user-id="<%= assigns.user_id %>" phx-target="<%= @myself %>" class="flex font-semibold h-12 p-4 rounded-lg text-gray-600 bg-gray-100 items-center">
-      + Add a card
-    </div>
-  </a>
-  <%= live_component @socket, TodoWeb.NewCardComponent, id: "new-card-modal", user_id: assigns.user_id, board_list: assigns.board_list %>
+  <div phx-click="display-new-board-list-component" phx-value-id="new-card-component" phx-value-user-id="<%= assigns.user_id %>" phx-target="<%= @myself %>" class="flex font-semibold h-12 p-4 rounded-lg text-gray-600 bg-gray-100 items-center cursor-pointer" id="add-new-card-button">
+    + Add a card
+  </div>
+  <%= live_component @socket, TodoWeb.NewCardComponent, id: "new-card-component", board_list: assigns.board_list %>
 </div>

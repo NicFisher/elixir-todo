@@ -1,9 +1,9 @@
 defmodule Todo.Factory do
-  alias Todo.Boards.{BoardList, Board}
+  alias Todo.Boards.{BoardList, Board, Card}
   alias Todo.Accounts.User
   alias Todo.Repo
 
-  def create_user(email) do
+  def create_user(email \\ "email@email.com") do
     %User{}
     |> User.changeset(%{
       email: email,
@@ -31,6 +31,17 @@ defmodule Todo.Factory do
       name: board_list_name,
       position: position,
       archived: false
+    })
+    |> Repo.insert()
+  end
+
+  def create_card(name, description, board_id, board_list) do
+    board_list
+    |> Ecto.build_assoc(:cards)
+    |> Card.changeset(%{
+      name: name,
+      description: description,
+      board_id: board_id,
     })
     |> Repo.insert()
   end

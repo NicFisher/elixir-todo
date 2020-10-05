@@ -1,5 +1,6 @@
-<%= for card <- assigns.cards do %>
-    <li>
+<ul id="cards">
+  <%= for card <- assigns.cards do %>
+    <li class="mb-2">
       <div class="border-2 border-gray-200 rounded-lg bg-white mx-auto m-1 p-4 notification-box break-normal">
         <span class="float-right">
           <svg
@@ -20,4 +21,5 @@
         </div>
       </div>
     </li>
-<% end %>
+  <% end %>
+</ul>
