@@ -41,7 +41,7 @@ defmodule Todo.Factory do
     |> Card.changeset(%{
       name: name,
       description: description,
-      board_id: board_id,
+      board_id: board_id
     })
     |> Repo.insert()
   end

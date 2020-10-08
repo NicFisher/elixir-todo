@@ -14,7 +14,10 @@ defmodule Todo.Repo.Migrations.AddCardsTable do
       timestamps()
     end
 
-    create index("cards", [:board_list_id], where: "archived = false", name: :cards_board_list_id_and_non_archived_index)
+    create index("cards", [:board_list_id],
+             where: "archived = false",
+             name: :cards_board_list_id_and_non_archived_index
+           )
 
     create index(:cards, :board_list_id)
     create index(:cards, :id)

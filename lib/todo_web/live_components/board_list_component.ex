@@ -7,7 +7,7 @@ defmodule TodoWeb.BoardListComponent do
   end
 
   def handle_event("display-new-board-list-component", %{"id" => id}, socket) do
-    send_update TodoWeb.NewCardComponent, id: id, modal_state: "display"
+    send_update(TodoWeb.NewCardComponent, id: id, modal_state: "display")
     {:noreply, socket}
   end
 end

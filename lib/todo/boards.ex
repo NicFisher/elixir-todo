@@ -62,7 +62,6 @@ defmodule Todo.Boards do
         order_by: [asc: board_lists.position, desc: cards.inserted_at],
         preload: [board_lists: {board_lists, cards: cards}]
 
-
     Repo.one!(query)
   end
 

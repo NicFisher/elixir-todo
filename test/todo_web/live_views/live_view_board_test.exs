@@ -21,7 +21,11 @@ defmodule TodoWeb.LiveViewBoardTest do
     {:ok, auth_conn: auth_conn, conn: conn, user: user, board: board, board_list: board_list}
   end
 
-  test "displays board, board list and cards", %{auth_conn: auth_conn, board: board, board_list: board_list} do
+  test "displays board, board list and cards", %{
+    auth_conn: auth_conn,
+    board: board,
+    board_list: board_list
+  } do
     {:ok, _card} = Factory.create_card("Do something", "The description", board.id, board_list)
     {:ok, view, html} = live(auth_conn, "boards/#{board.id}")
 
@@ -34,11 +38,14 @@ defmodule TodoWeb.LiveViewBoardTest do
     {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
 
     assert view
-    |> element("#new-modal-overlay")
-    |> render() =~ "class=\"hidden"
+           |> element("#new-modal-overlay")
+           |> render() =~ "class=\"hidden"
   end
 
-  test "opens new card modal when selecting Add a card link", %{auth_conn: auth_conn, board: board} do
+  test "opens new card modal when selecting Add a card link", %{
+    auth_conn: auth_conn,
+    board: board
+  } do
     {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
 
     view
@@ -48,7 +55,10 @@ defmodule TodoWeb.LiveViewBoardTest do
     assert has_element?(view, "#new-card-modal", "Add Card")
   end
 
-  test "submitting a new-card-form creates card and adds it to the board", %{auth_conn: auth_conn, board: board} do
+  test "submitting a new-card-form creates card and adds it to the board", %{
+    auth_conn: auth_conn,
+    board: board
+  } do
     {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
 
     view
