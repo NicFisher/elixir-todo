@@ -20,6 +20,6 @@ defmodule Todo.Boards.Card do
   def changeset(card, attrs) do
     card
     |> cast(attrs, [:name, :description, :archived, :due_date])
-    |> validate_required([:name, :board_id])
+    |> validate_required([:name])
   end
 end

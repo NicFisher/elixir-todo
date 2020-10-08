@@ -35,13 +35,12 @@ defmodule Todo.Factory do
     |> Repo.insert()
   end
 
-  def create_card(name, description, board_id, board_list) do
+  def create_card(name, description, board_list) do
     board_list
     |> Ecto.build_assoc(:cards)
     |> Card.changeset(%{
       name: name,
-      description: description,
-      board_id: board_id
+      description: description
     })
     |> Repo.insert()
   end

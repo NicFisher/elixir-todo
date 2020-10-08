@@ -1,5 +1,6 @@
 defmodule TodoWeb.LiveViewBoardTest do
   use TodoWeb.ConnCase
+  alias Todo.Boards
   alias Todo.Accounts.{User, Guardian}
   alias Todo.Accounts
   import Phoenix.ConnTest
@@ -24,10 +25,13 @@ defmodule TodoWeb.LiveViewBoardTest do
   test "displays board, board list and cards", %{
     auth_conn: auth_conn,
     board: board,
-    board_list: board_list
+    board_list: board_list,
+    user: user
   } do
-    {:ok, _card} = Factory.create_card("Do something", "The description", board.id, board_list)
+    {:ok, _card} = Factory.create_card("Do something", "The description", board_list)
     {:ok, view, html} = live(auth_conn, "boards/#{board.id}")
+
+    Boards.get_board!(board.id, user.id) |> IO.inspect
 
     assert html =~ "First Board"
     assert has_element?(view, "#board-lists", "New Board List")
