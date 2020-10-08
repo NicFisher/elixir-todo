@@ -1,8 +1,7 @@
 defmodule TodoWeb.NewCardComponent do
   use Phoenix.LiveComponent
-  use Phoenix.LiveView
   alias Todo.Boards
-  alias Todo.Boards.{Card, BoardList}
+  alias Todo.Boards.Card
 
   def render(assigns) do
     Phoenix.View.render(TodoWeb.CardView, "new_card_component.html", assigns)
@@ -21,17 +20,17 @@ defmodule TodoWeb.NewCardComponent do
     {:ok, assign(socket, assigns)}
   end
 
-  def handle_event("hide-new-board-list-component", params, socket) do
+  def handle_event("hide-new-board-list-component", _params, socket) do
     {:noreply, assign(socket, modal_state: "hidden", error: false)}
   end
 
   def handle_event("create", %{"card" => attrs}, %{assigns: %{board_list: board_list}} = socket) do
-    with {:ok, card} <-
+    with {:ok, _card} <-
            Todo.Boards.create_card(Map.put(attrs, "board_id", board_list.board_id), board_list) do
       send(self(), {:card_created})
       {:noreply, assign(socket, modal_state: "hidden", error: false)}
     else
-      error -> {:noreply, assign(socket, :error, true)}
+      _error -> {:noreply, assign(socket, :error, true)}
     end
   end
 end
