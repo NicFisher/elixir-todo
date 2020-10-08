@@ -30,24 +30,6 @@ defmodule TodoWeb.BoardControllerTest do
     end
   end
 
-  describe "GET board #show" do
-    test "with user in session", %{auth_conn: auth_conn} do
-      {:ok, board} =
-        Todo.Repo.insert(%Board{
-          name: "First Board",
-          user_id: "3f10cb63-122e-47f6-b987-2ee0b0e63446"
-        })
-
-      conn = get(auth_conn, "boards/#{board.id}")
-      assert html_response(conn, 200) =~ "First Board"
-    end
-
-    test "without user in session", %{conn: conn} do
-      conn = get(conn, "boards/new")
-      assert conn.status == 401
-    end
-  end
-
   describe "GET board #index" do
     test "with user in session", %{auth_conn: auth_conn} do
       Todo.Repo.insert(%Board{

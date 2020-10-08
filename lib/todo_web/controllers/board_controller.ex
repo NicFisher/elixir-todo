@@ -7,11 +7,6 @@ defmodule TodoWeb.BoardController do
     render(conn, "new.html", changeset: Boards.change_board(%Board{}))
   end
 
-  def show(conn, %{"id" => id}) do
-    changeset = Boards.change_board(get_board(conn, id))
-    render(conn, "show.html", board: get_board(conn, id), changeset: changeset)
-  end
-
   def index(conn, _params) do
     render(conn, "index.html", boards: user_boards(conn))
   end

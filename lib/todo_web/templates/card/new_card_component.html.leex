@@ -1,4 +1,4 @@
-<div id="overlay" class="<%= assigns.modal_state %> fixed z-10 inset-0 overflow-y-auto">
+<div id="new-modal-overlay" class="<%= assigns.modal_state %> fixed z-10 inset-0 overflow-y-auto">
   <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
     <div class="fixed inset-0 transition-opacity">
       <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
@@ -12,9 +12,12 @@
         </svg>
       </div>
       </div>
-      <div class="bg-white px-4 pb-4 sm:p-6 sm:pb-4">
+      <div class="bg-white px-4 pb-4">
         <div class="flex justify-center">
           <div class="w-full mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+            <%= if assigns.error do %>
+              <p class="mx-8 px-8 mb-2 alert alert-danger">Invalid details</h2>
+            <% end %>
             <%= form_for assigns.changeset, "#", [phx_submit: :create, phx_target: @myself, class: "px-8 pb-8 mb-4", id: "new-card-form"], fn f -> %>
               <div class="mb-4">
                 <%= label f, :name, class: "control-label", class: "block text-gray-700 text-sm font-bold mb-2" %>

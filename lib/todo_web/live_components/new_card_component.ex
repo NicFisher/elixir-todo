@@ -9,7 +9,7 @@ defmodule TodoWeb.NewCardComponent do
   end
 
   def mount(socket) do
-    {:ok, assign(socket, modal_state: "hidden", changeset: Boards.change_card(%Card{}))}
+    {:ok, assign(socket, modal_state: "hidden", error: false, changeset: Boards.change_card(%Card{}))}
   end
 
   def update(%{id: "new-card-component", modal_state: modal_state}, socket) do
@@ -25,9 +25,11 @@ defmodule TodoWeb.NewCardComponent do
   end
 
   def handle_event("create", %{"card" => attrs}, %{assigns: %{board_list: board_list} } = socket) do
-    {:ok, card} = Todo.Boards.create_card(Map.put(attrs, "board_id", board_list.board_id), board_list)
-
-    send self(), {:card_created, card}
-    {:noreply, assign(socket, :modal_state, "hidden")}
+    with {:ok, card} <- Todo.Boards.create_card(Map.put(attrs, "board_id", board_list.board_id), board_list) do
+      send self(), {:card_created}
+      {:noreply, assign(socket, :modal_state, "hidden")}
+    else
+      error -> {:noreply, assign(socket, :error, true)}
+    end
   end
 end
