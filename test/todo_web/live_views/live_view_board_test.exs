@@ -26,7 +26,7 @@ defmodule TodoWeb.LiveViewBoardTest do
     board: board,
     board_list: board_list
   } do
-    {:ok, _card} = Factory.create_card("Do something", "The description", board.id, board_list)
+    {:ok, _card} = Factory.create_card("Do something", "The description", board_list)
     {:ok, view, html} = live(auth_conn, "boards/#{board.id}")
 
     assert html =~ "First Board"

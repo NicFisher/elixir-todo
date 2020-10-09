@@ -10,7 +10,6 @@ defmodule Todo.Boards.Card do
     field :archived, :boolean, default: false
     field :due_date, :date
 
-    # belongs_to :board, Board, foreign_key: :board_id, type: :binary_id
     belongs_to :board_list, BoardList, foreign_key: :board_list_id, type: :binary_id
 
     timestamps()
@@ -20,6 +19,6 @@ defmodule Todo.Boards.Card do
   def changeset(card, attrs) do
     card
     |> cast(attrs, [:name, :description, :archived, :due_date])
-    |> validate_required([:name, :board_id])
+    |> validate_required([:name])
   end
 end

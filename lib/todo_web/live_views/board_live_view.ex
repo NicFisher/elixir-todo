@@ -1,4 +1,7 @@
 defmodule TodoWeb.BoardLiveView do
+  alias Todo.Accounts.Guardian
+  alias Todo.Boards
+  alias Todo.Boards.Board
   use Phoenix.LiveView
 
   def render(assigns) do
@@ -6,14 +9,12 @@ defmodule TodoWeb.BoardLiveView do
   end
 
   def mount(%{"id" => id}, %{"guardian_default_token" => token}, socket) do
-    # TODO - Move this to a seperate module
-    {:ok, claims} = Todo.Accounts.Guardian.decode_and_verify(token)
-    {:ok, user} = Todo.Accounts.Guardian.resource_from_claims(claims)
+    with {:ok, user} <- Guardian.user_from_token(token),
+         board = Boards.get_board!(id, user.id),
+         changeset = Boards.change_board(board) do
 
-    board = Todo.Boards.get_board!(id, user.id)
-    changeset = Todo.Boards.change_board(board)
-
-    {:ok, assign(socket, board: board, user: user, changeset: changeset)}
+      {:ok, assign(socket, board: board, user: user, changeset: changeset)}
+    end
   end
 
   def handle_info({:card_created}, %{assigns: %{board: board}} = socket) do
