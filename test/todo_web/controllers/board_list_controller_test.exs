@@ -57,7 +57,7 @@ defmodule TodoWeb.BoardListControllerTest do
       assert new_list_board.position == 1
       assert new_list_board.archived == false
 
-      assert redirected_to(conn) == Routes.board_path(conn, :show, board.id)
+      assert redirected_to(conn) == "/boards/#{board.id}"
     end
 
     test "without valid params and with user in session returns error", %{
@@ -159,7 +159,7 @@ defmodule TodoWeb.BoardListControllerTest do
       assert new_list_board.position == 3
       assert new_list_board.archived == false
 
-      assert redirected_to(conn) == Routes.board_path(conn, :show, board.id)
+      assert redirected_to(conn) == "/boards/#{board.id}"
     end
 
     test "with invalid params and user in session returns invalid details error", %{

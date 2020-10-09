@@ -6,7 +6,7 @@ defmodule Todo.Boards do
   import Ecto.Query, warn: false
   alias Todo.Repo
 
-  alias Todo.Boards.{Board, BoardList, BoardLists.BoardListManager}
+  alias Todo.Boards.{Board, BoardList, BoardLists.BoardListManager, Card}
 
   @doc """
   Returns the list of boards.
@@ -40,7 +40,7 @@ defmodule Todo.Boards do
   end
 
   @doc """
-  Gets a single board with the board lists ordered by position for a user.
+  Gets a single board with the board lists and cards for a user. The board lists are ordered by board_list position.
 
   Raises `Ecto.NoResultsError` if the Board does not exist.
 
@@ -55,12 +55,12 @@ defmodule Todo.Boards do
   """
   def get_board!(id, user_id) do
     query =
-      from b in Todo.Boards.Board,
-        left_join: bl in Todo.Boards.BoardList,
-        on: b.id == bl.board_id,
-        where: b.id == ^id and b.user_id == ^user_id,
-        order_by: bl.position,
-        preload: [board_lists: bl]
+      from board in Todo.Boards.Board,
+        where: board.id == ^id and board.user_id == ^user_id,
+        left_join: board_lists in assoc(board, :board_lists),
+        left_join: cards in assoc(board_lists, :cards),
+        order_by: [asc: board_lists.position, desc: cards.inserted_at],
+        preload: [board_lists: {board_lists, cards: cards}]
 
     Repo.one!(query)
   end
@@ -162,6 +162,25 @@ defmodule Todo.Boards do
   end
 
   @doc """
+  Creates a card for a board list.
+
+  ## Examples
+
+      iex> create_card(%{field: value}, %Card{})
+      {:ok, %Board{}}
+
+      iex> create_card(%{field: bad_value}, %Card{})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_card(attrs \\ %{}, board_list) do
+    board_list
+    |> Ecto.build_assoc(:cards)
+    |> Card.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
   Returns an `%Ecto.Changeset{}` for tracking board changes.
 
   ## Examples
@@ -185,5 +204,18 @@ defmodule Todo.Boards do
   """
   def change_board_list(%BoardList{} = board_list, attrs \\ %{}) do
     BoardList.changeset(board_list, attrs)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking card changes.
+
+  ## Examples
+
+      iex> change_card(card)
+      %Ecto.Changeset{data: %Card{}}
+
+  """
+  def change_card(%Card{} = card, attrs \\ %{}) do
+    Card.changeset(card, attrs)
   end
 end

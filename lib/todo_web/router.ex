@@ -1,5 +1,6 @@
 defmodule TodoWeb.Router do
   use TodoWeb, :router
+  import Phoenix.LiveView.Router
 
   pipeline :auth do
     plug Todo.Accounts.Pipeline
@@ -7,12 +8,13 @@ defmodule TodoWeb.Router do
 
   pipeline :auth_required do
     plug Guardian.Plug.EnsureAuthenticated
+    plug TodoWeb.Plugs.AssignUser
   end
 
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
-    plug :fetch_flash
+    plug :fetch_live_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
@@ -23,7 +25,10 @@ defmodule TodoWeb.Router do
 
   pipeline :dashboard do
     plug :put_layout, {TodoWeb.LayoutView, "dashboard.html"}
-    plug TodoWeb.Plugs.AssignUser
+  end
+
+  pipeline :live_view do
+    plug :put_root_layout, {TodoWeb.LayoutView, :dashboard}
   end
 
   scope "/", TodoWeb do
@@ -41,10 +46,16 @@ defmodule TodoWeb.Router do
     pipe_through [:browser, :auth, :auth_required, :dashboard]
 
     resources "/users", UserController, only: [:update, :edit]
-    resources "/boards", BoardController, only: [:index, :new, :create, :show, :edit, :update]
+    resources "/boards", BoardController, only: [:index, :new, :create, :edit, :update]
 
     resources "/boards/:board_id/board-list", BoardListController,
       only: [:new, :create, :edit, :update]
+  end
+
+  scope "/boards", TodoWeb do
+    pipe_through [:browser, :auth, :auth_required, :live_view]
+
+    live "/:id", BoardLiveView
   end
 
   # Other scopes may use custom stacks.
