@@ -9,7 +9,7 @@ defmodule TodoWeb.LiveViewBoardTest do
   setup %{conn: conn} do
     {:ok, user} = Factory.create_user()
     {:ok, board} = Factory.create_board(user, "First Board")
-    {:ok, board_list} = Factory.create_board_list(board, "New Board List", "1")
+    {:ok, list} = Factory.create_list(board, "New List", "1")
 
     Accounts.authenticate_user("email@email.com", "password")
 
@@ -18,19 +18,19 @@ defmodule TodoWeb.LiveViewBoardTest do
       |> guardian_sign_in_user(user.id)
       |> add_token_to_session()
 
-    {:ok, auth_conn: auth_conn, conn: conn, user: user, board: board, board_list: board_list}
+    {:ok, auth_conn: auth_conn, conn: conn, user: user, board: board, list: list}
   end
 
-  test "displays board, board list and cards", %{
+  test "displays board, list and cards", %{
     auth_conn: auth_conn,
     board: board,
-    board_list: board_list
+    list: list
   } do
-    {:ok, _card} = Factory.create_card("Do something", "The description", board_list)
+    {:ok, _card} = Factory.create_card("Do something", "The description", list)
     {:ok, view, html} = live(auth_conn, "boards/#{board.id}")
 
     assert html =~ "First Board"
-    assert has_element?(view, "#board-lists", "New Board List")
+    assert has_element?(view, "#lists", "New List")
     assert has_element?(view, "#cards", "Do something")
   end
 

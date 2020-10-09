@@ -6,7 +6,7 @@ defmodule Todo.Boards do
   import Ecto.Query, warn: false
   alias Todo.Repo
 
-  alias Todo.Boards.{Board, BoardList, BoardLists.BoardListManager, Card}
+  alias Todo.Boards.{Board, List, Lists.ListManager, Card}
 
   @doc """
   Returns the list of boards.
@@ -40,7 +40,7 @@ defmodule Todo.Boards do
   end
 
   @doc """
-  Gets a single board with the board lists and cards for a user. The board lists are ordered by board_list position.
+  Gets a single board with the lists and cards for a user. The lists are ordered by list position.
 
   Raises `Ecto.NoResultsError` if the Board does not exist.
 
@@ -57,35 +57,35 @@ defmodule Todo.Boards do
     query =
       from board in Todo.Boards.Board,
         where: board.id == ^id and board.user_id == ^user_id,
-        left_join: board_lists in assoc(board, :board_lists),
-        left_join: cards in assoc(board_lists, :cards),
-        order_by: [asc: board_lists.position, desc: cards.inserted_at],
-        preload: [board_lists: {board_lists, cards: cards}]
+        left_join: lists in assoc(board, :lists),
+        left_join: cards in assoc(lists, :cards),
+        order_by: [asc: lists.position, desc: cards.inserted_at],
+        preload: [lists: {lists, cards: cards}]
 
     Repo.one!(query)
   end
 
   @doc """
-  Gets a single board list from a board for the user.
+  Gets a single list from a board for the user.
 
   Raises `Ecto.NoResultsError` if the Board does not exist.
 
   ## Examples
 
-      iex> get_board_list!(123, 456, 789)
+      iex> get_list!(123, 456, 789)
       %Board{}
 
-      iex> get_board_list!(456, 123, 789)
+      iex> get_list!(456, 123, 789)
       ** (Ecto.NoResultsError)
 
   """
-  def get_board_list!(board_list_id, board_id, user_id) do
+  def get_list!(list_id, board_id, user_id) do
     query =
       from b in Board,
-        join: bl in BoardList,
+        join: bl in List,
         on: bl.board_id == b.id,
         where:
-          b.id == ^board_id and b.user_id == ^user_id and bl.id == ^board_list_id and
+          b.id == ^board_id and b.user_id == ^user_id and bl.id == ^list_id and
             bl.archived == false,
         select: bl
 
@@ -130,39 +130,39 @@ defmodule Todo.Boards do
   end
 
   @doc """
-  Creates a board list for a board.
+  Creates a list for a board.
 
   ## Examples
 
-      iex> create_board_list(%{field: value}, %Board{})
-      {:ok, %BoardList{}}
+      iex> create_list(%{field: value}, %Board{})
+      {:ok, %List{}}
 
-      iex> create_board_list(%{field: bad_value}, %Board{})
+      iex> create_list(%{field: bad_value}, %Board{})
       {:error, "error message"}
 
   """
-  def create_board_list(attrs \\ %{}, board) do
-    BoardListManager.create(attrs, board)
+  def create_list(attrs \\ %{}, board) do
+    ListManager.create(attrs, board)
   end
 
   @doc """
-  Updates a board list.
+  Updates a list.
 
   ## Examples
 
-      iex> update_board_list(board_list, %{field: new_value})
+      iex> update_list(list, %{field: new_value})
       {:ok, %Board{}}
 
-      iex> update_board_list(board_list, %{field: bad_value})
+      iex> update_list(list, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_board_list(%BoardList{} = board_list, attrs) do
-    BoardListManager.update(attrs, board_list)
+  def update_list(%List{} = list, attrs) do
+    ListManager.update(attrs, list)
   end
 
   @doc """
-  Creates a card for a board list.
+  Creates a card for a list.
 
   ## Examples
 
@@ -173,8 +173,8 @@ defmodule Todo.Boards do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_card(attrs \\ %{}, board_list) do
-    board_list
+  def create_card(attrs \\ %{}, list) do
+    list
     |> Ecto.build_assoc(:cards)
     |> Card.changeset(attrs)
     |> Repo.insert()
@@ -194,16 +194,16 @@ defmodule Todo.Boards do
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking board list changes.
+  Returns an `%Ecto.Changeset{}` for tracking list changes.
 
   ## Examples
 
-      iex> change_board_list(board_list)
-      %Ecto.Changeset{data: %BoardList{}}
+      iex> change_list(list)
+      %Ecto.Changeset{data: %List{}}
 
   """
-  def change_board_list(%BoardList{} = board_list, attrs \\ %{}) do
-    BoardList.changeset(board_list, attrs)
+  def change_list(%List{} = list, attrs \\ %{}) do
+    List.changeset(list, attrs)
   end
 
   @doc """

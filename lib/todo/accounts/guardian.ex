@@ -11,7 +11,7 @@ defmodule Todo.Accounts.Guardian do
 
   def user_from_token(token) do
     {:ok, claims} = Guardian.decode_and_verify(token)
-    {:ok, user} = Guardian.resource_from_claims(claims)
+    Guardian.resource_from_claims(claims)
   end
 
   def subject_for_token(user, _claims) do

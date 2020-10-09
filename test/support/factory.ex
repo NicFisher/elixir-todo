@@ -1,5 +1,5 @@
 defmodule Todo.Factory do
-  alias Todo.Boards.{BoardList, Board, Card}
+  alias Todo.Boards.{List, Board, Card}
   alias Todo.Accounts.User
   alias Todo.Repo
 
@@ -24,19 +24,19 @@ defmodule Todo.Factory do
     |> Repo.insert()
   end
 
-  def create_board_list(board, board_list_name, position) do
+  def create_list(board, list_name, position) do
     board
-    |> Ecto.build_assoc(:board_lists)
-    |> BoardList.changeset(%{
-      name: board_list_name,
+    |> Ecto.build_assoc(:lists)
+    |> List.changeset(%{
+      name: list_name,
       position: position,
       archived: false
     })
     |> Repo.insert()
   end
 
-  def create_card(name, description, board_list) do
-    board_list
+  def create_card(name, description, list) do
+    list
     |> Ecto.build_assoc(:cards)
     |> Card.changeset(%{
       name: name,
