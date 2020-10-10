@@ -1,6 +1,6 @@
 <ul id="cards">
   <%= for card <- assigns.cards do %>
-    <li class="mb-2">
+    <li phx-click="display-edit-card-component" phx-value-id="edit-card-component" phx-value-card-id="<%= card.id %>" phx-target="<%= @myself %>" class="mb-2 cursor-pointer">
       <div class="border-2 border-gray-200 rounded-lg bg-white mx-auto m-1 p-4 notification-box break-normal">
         <span class="float-right">
           <svg
@@ -22,4 +22,5 @@
       </div>
     </li>
   <% end %>
+  <%= live_component @socket, TodoWeb.EditCardComponent, id: "edit-card-component" %>
 </ul>

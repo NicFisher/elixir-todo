@@ -11,7 +11,7 @@
     <div class="border-b-2 mt-3 mb-5"></div>
     <%= live_component @socket, TodoWeb.CardsComponent, id: "cards-component", cards: @list.cards %>
   </ul>
-  <div phx-click="display-new-list-component" phx-value-id="new-card-component" phx-value-user-id="<%= assigns.user_id %>" phx-target="<%= @myself %>" class="flex font-semibold h-12 p-4 rounded-lg text-gray-600 bg-gray-100 items-center cursor-pointer" id="add-new-card-button">
+  <div phx-click="display-new-card-component" phx-value-id="new-card-component" phx-target="<%= @myself %>" class="flex font-semibold h-12 p-4 rounded-lg text-gray-600 bg-gray-100 items-center cursor-pointer">
     + Add a card
   </div>
   <%= live_component @socket, TodoWeb.NewCardComponent, id: "new-card-component", list: assigns.list %>
