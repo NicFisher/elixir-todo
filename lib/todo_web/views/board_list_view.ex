@@ -1,3 +1,3 @@
-defmodule TodoWeb.BoardListView do
+defmodule TodoWeb.ListView do
   use TodoWeb, :view
 end

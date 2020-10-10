@@ -46,7 +46,7 @@ defmodule Todo.BoardsTest do
     end
 
     test "get_board!/2 returns the board with given id" do
-      board = board_fixture() |> Repo.preload(:board_lists)
+      board = board_fixture() |> Repo.preload(:lists)
       assert Boards.get_board!(board.id, board.user_id) == board
     end
 
@@ -66,7 +66,7 @@ defmodule Todo.BoardsTest do
     end
 
     test "update_board/2 with invalid data returns error changeset" do
-      board = board_fixture() |> Repo.preload(:board_lists)
+      board = board_fixture() |> Repo.preload(:lists)
       assert {:error, %Ecto.Changeset{}} = Boards.update_board(board, @invalid_attrs)
       assert board == Boards.get_board!(board.id, board.user_id)
     end

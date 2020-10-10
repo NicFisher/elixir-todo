@@ -1,5 +1,5 @@
 defmodule Todo.Boards.Card do
-  alias Todo.Boards.BoardList
+  alias Todo.Boards.List
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -10,7 +10,7 @@ defmodule Todo.Boards.Card do
     field :archived, :boolean, default: false
     field :due_date, :date
 
-    belongs_to :board_list, BoardList, foreign_key: :board_list_id, type: :binary_id
+    belongs_to :list, List, foreign_key: :list_id, type: :binary_id
 
     timestamps()
   end

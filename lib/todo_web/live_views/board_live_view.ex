@@ -1,7 +1,6 @@
 defmodule TodoWeb.BoardLiveView do
   alias Todo.Accounts.Guardian
   alias Todo.Boards
-  alias Todo.Boards.Board
   use Phoenix.LiveView
 
   def render(assigns) do
@@ -12,7 +11,6 @@ defmodule TodoWeb.BoardLiveView do
     with {:ok, user} <- Guardian.user_from_token(token),
          board = Boards.get_board!(id, user.id),
          changeset = Boards.change_board(board) do
-
       {:ok, assign(socket, board: board, user: user, changeset: changeset)}
     end
   end

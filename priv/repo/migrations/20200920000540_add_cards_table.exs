@@ -8,18 +8,17 @@ defmodule Todo.Repo.Migrations.AddCardsTable do
       add :description, :string
       add :archived, :boolean, default: false
       add :due_date, :date
-      add :board_list_id, references(:board_lists, type: :uuid), null: false
-      # add :board_id, references(:boards, type: :uuid), null: false
+      add :list_id, references(:lists, type: :uuid), null: false
 
       timestamps()
     end
 
-    create index("cards", [:board_list_id],
+    create index("cards", [:list_id],
              where: "archived = false",
-             name: :cards_board_list_id_and_non_archived_index
+             name: :cards_list_id_and_non_archived_index
            )
 
-    create index(:cards, :board_list_id)
+    create index(:cards, :list_id)
     create index(:cards, :id)
   end
 end

@@ -1,10 +1,10 @@
-defmodule Todo.Boards.BoardList do
+defmodule Todo.Boards.List do
   alias Todo.Boards.{Board, Card}
   use Ecto.Schema
   import Ecto.Changeset
 
   @primary_key {:id, :binary_id, autogenerate: true}
-  schema "board_lists" do
+  schema "lists" do
     field :name, :string, null: false
     field :archived, :boolean, default: false
     field :position, :integer, null: false

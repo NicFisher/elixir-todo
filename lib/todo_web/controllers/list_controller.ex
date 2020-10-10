@@ -1,20 +1,20 @@
-defmodule TodoWeb.BoardListController do
+defmodule TodoWeb.ListController do
   use TodoWeb, :controller
-  alias Todo.{Boards, Boards.BoardList}
+  alias Todo.{Boards, Boards.List}
   import Guardian.Plug, only: [current_resource: 1]
 
   def new(conn, %{"board_id" => board_id}) do
     board = Boards.get_board!(board_id, current_resource(conn).id)
-    render(conn, "new.html", changeset: Boards.change_board_list(%BoardList{board: board}))
+    render(conn, "new.html", changeset: Boards.change_list(%List{board: board}))
   end
 
-  def create(conn, %{"board_id" => board_id, "board_list" => board_list}) do
+  def create(conn, %{"board_id" => board_id, "list" => list}) do
     board = Boards.get_board!(board_id, current_resource(conn).id)
 
-    case Boards.create_board_list(board_list, board) do
+    case Boards.create_list(list, board) do
       {:ok, _multi} ->
         conn
-        |> put_flash(:info, "New Board List Created")
+        |> put_flash(:info, "New List Created")
         |> redirect(to: "/boards/#{board_id}")
 
       {:error, error} ->
@@ -23,18 +23,18 @@ defmodule TodoWeb.BoardListController do
   end
 
   def edit(conn, %{"board_id" => board_id, "id" => id}) do
-    board_list_changeset =
-      Boards.get_board_list!(id, board_id, current_resource(conn).id)
-      |> Boards.change_board_list()
+    list_changeset =
+      Boards.get_list!(id, board_id, current_resource(conn).id)
+      |> Boards.change_list()
 
-    render(conn, "edit.html", changeset: board_list_changeset)
+    render(conn, "edit.html", changeset: list_changeset)
   end
 
-  def update(conn, %{"board_list" => attrs, "id" => id, "board_id" => board_id}) do
-    case update_board_list(conn, attrs, id, board_id) do
+  def update(conn, %{"list" => attrs, "id" => id, "board_id" => board_id}) do
+    case update_list(conn, attrs, id, board_id) do
       {:ok, _board} ->
         conn
-        |> put_flash(:info, "Board List Updated")
+        |> put_flash(:info, "List Updated")
         |> redirect(to: "/boards/#{board_id}")
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -49,8 +49,8 @@ defmodule TodoWeb.BoardListController do
     end
   end
 
-  defp update_board_list(conn, attrs, id, board_id) do
-    Boards.get_board_list!(id, board_id, current_resource(conn).id)
-    |> Boards.update_board_list(attrs)
+  defp update_list(conn, attrs, id, board_id) do
+    Boards.get_list!(id, board_id, current_resource(conn).id)
+    |> Boards.update_list(attrs)
   end
 end
