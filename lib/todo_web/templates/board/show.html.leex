@@ -12,7 +12,7 @@
 <div class="w-full h-full px-6">
   <div class="flex h-full" id="lists">
     <%= for list <- assigns.board.lists do %>
-      <%= live_component @socket, TodoWeb.ListComponent, id: list.id, list: list, user_id: assigns.user.id %>
+      <%= live_component @socket, TodoWeb.ListComponent, id: list.id, list: list, user_id: assigns.user.id, lists: assigns.board.lists %>
     <% end %>
   </div>
 </div>

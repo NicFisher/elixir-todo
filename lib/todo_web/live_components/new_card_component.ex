@@ -27,7 +27,7 @@ defmodule TodoWeb.NewCardComponent do
   def handle_event("create", %{"card" => attrs}, %{assigns: %{list: list}} = socket) do
     with {:ok, _card} <-
            Todo.Boards.create_card(attrs, list) do
-      send(self(), {:card_created})
+      send(self(), {:refresh_board})
       {:noreply, assign(socket, modal_state: "hidden", error: false)}
     else
       _error -> {:noreply, assign(socket, :error, true)}

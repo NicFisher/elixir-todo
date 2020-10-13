@@ -15,7 +15,7 @@ defmodule TodoWeb.BoardLiveView do
     end
   end
 
-  def handle_info({:card_created}, %{assigns: %{board: board}} = socket) do
+  def handle_info({:refresh_board}, %{assigns: %{board: board}} = socket) do
     board = Todo.Boards.get_board!(board.id, board.user_id)
 
     {:noreply, assign(socket, board: board)}

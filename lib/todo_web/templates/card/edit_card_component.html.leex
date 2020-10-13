@@ -18,17 +18,20 @@
             <%= if assigns.error do %>
               <p class="mx-8 px-8 mb-2 alert alert-danger">Invalid details</h2>
             <% end %>
-            <%= form_for assigns.changeset, "#", [phx_submit: :update, phx_target: @myself, class: "px-8 pb-8 mb-4", id: "new-card-form"], fn f -> %>
+            <%= form_for assigns.changeset, "#", [phx_submit: :update, phx_target: @myself, class: "px-8 pb-8 mb-4", id: "edit-card-form"], fn f -> %>
               <div class="mb-4">
-                <%= label f, :name, class: "control-label", class: "block text-gray-700 text-sm font-bold mb-2" %>
+                <%= label f, :name, class: "control-label block text-gray-700 text-sm font-bold mb-2" %>
                 <%= text_input f, :name, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline align-middle", placeholder: "Todo List" %>
               </div>
               <div class="mb-4">
-                <%= label f, :description, class: "control-label", class: "block text-gray-700 text-sm font-bold mb-2" %>
+                <%= label f, :description, class: "control-label block text-gray-700 text-sm font-bold mb-2" %>
                 <%= textarea f, :description, rows: 6, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline align-middle", placeholder: "Todo List" %>
               </div>
+              <div class="mb-4">
+                <%= select f, :list_id, Enum.map(assigns.lists, fn %{id: id, name: name} -> { name, id } end), class: "bg-white shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline align-middle" %>
+              </div>
               <div class="flex items-center justify-center mt-10">
-                <%= submit "Add Card", phx_disable_with: "Adding Card", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" %>
+                <%= submit "Update Card", phx_disable_with: "Adding Card", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" %>
               </div>
             <% end %>
           </div>

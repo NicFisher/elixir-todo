@@ -218,4 +218,23 @@ defmodule Todo.Boards do
   def change_card(%Card{} = card, attrs \\ %{}) do
     Card.changeset(card, attrs)
   end
+
+  @doc """
+  Updates a card.
+
+  ## Examples
+
+      iex> update_card(card, %{field: new_value})
+      {:ok, %Board{}}
+
+      iex> update_card(card, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_card(%Card{} = card, attrs) do
+    card
+    |> Card.changeset(attrs)
+    |> Repo.update()
+  end
+
 end
