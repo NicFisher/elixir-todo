@@ -31,51 +31,109 @@ defmodule TodoWeb.LiveViewBoardTest do
 
     assert html =~ "First Board"
     assert has_element?(view, "#lists", "New List")
-    assert has_element?(view, "#cards", "Do something")
+    assert has_element?(view, "#cards-1", "Do something")
   end
 
-  test "does not show new card component when page loaded", %{auth_conn: auth_conn, board: board} do
-    {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
+  describe "new card modal" do
+    test "does not show new card component when page loaded", %{
+      auth_conn: auth_conn,
+      board: board
+    } do
+      {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
 
-    assert view
-           |> element("#new-modal-overlay")
-           |> render() =~ "class=\"hidden"
+      assert view
+             |> element("#new-modal-overlay")
+             |> render() =~ "class=\"hidden"
+    end
+
+    test "opens new card modal when selecting Add a card link", %{
+      auth_conn: auth_conn,
+      board: board
+    } do
+      {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
+
+      view
+      |> open_new_card_modal()
+
+      assert has_element?(view, "#new-card-modal", "Add Card")
+    end
+
+    test "submitting a new-card-form creates card and adds it to the board", %{
+      auth_conn: auth_conn,
+      board: board
+    } do
+      {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
+
+      view
+      |> open_new_card_modal()
+      |> submit_new_card_form(%{name: "This is a new card", description: "description"})
+
+      assert has_element?(view, "#cards-1", "This is a new card")
+    end
+
+    test "invalid new-card-form returns error", %{auth_conn: auth_conn, board: board} do
+      {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
+
+      view
+      |> open_new_card_modal()
+      |> submit_new_card_form(%{name: "", description: ""})
+
+      assert has_element?(view, "#new-card-modal", "Invalid details")
+    end
   end
 
-  test "opens new card modal when selecting Add a card link", %{
-    auth_conn: auth_conn,
-    board: board
-  } do
-    {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
+  describe "edit card modal" do
+    test "does not show edit card component when page loaded", %{
+      auth_conn: auth_conn,
+      board: board
+    } do
+      {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
 
-    view
-    |> element("#add-new-card-button", "+ Add a card")
-    |> render_click()
+      assert view
+             |> element("#edit-modal-overlay")
+             |> render() =~ "class=\"hidden"
+    end
 
-    assert has_element?(view, "#new-card-modal", "Add Card")
-  end
+    test "opens edit card modal when selecting a card", %{
+      auth_conn: auth_conn,
+      board: board,
+      list: list
+    } do
+      {:ok, card} = Factory.create_card("Some task", "The description", list)
+      {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
 
-  test "submitting a new-card-form creates card and adds it to the board", %{
-    auth_conn: auth_conn,
-    board: board
-  } do
-    {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
+      view
+      |> element("##{card.id}", "Some task")
+      |> render_click()
 
-    view
-    |> open_new_card_modal()
-    |> submit_card_form(%{name: "This is a new card", description: "description"})
+      assert has_element?(view, "#edit-card-modal", "Update Card")
+    end
 
-    assert has_element?(view, "#cards", "This is a new card")
-  end
+    test "submitting a edit-card-form updates card and the board", %{
+      auth_conn: auth_conn,
+      board: board,
+      list: list
+    } do
+      {:ok, card} = Factory.create_card("Some task", "The description", list)
+      {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
 
-  test "invalid new-card-form returns error", %{auth_conn: auth_conn, board: board} do
-    {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
+      view
+      |> open_edit_card_modal(card)
+      |> submit_edit_card_form(%{name: "Updated name", description: "Updated description"})
 
-    view
-    |> open_new_card_modal()
-    |> submit_card_form(%{name: "", description: ""})
+      assert has_element?(view, "#cards-1", "Updated name")
+    end
 
-    assert has_element?(view, "#new-card-modal", "Invalid details")
+    test "invalid new-card-form returns error", %{auth_conn: auth_conn, board: board, list: list} do
+      {:ok, card} = Factory.create_card("Some task", "The description", list)
+      {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
+
+      view
+      |> open_edit_card_modal(card)
+      |> submit_edit_card_form(%{name: "", description: ""})
+
+      assert has_element?(view, "#edit-card-modal", "Invalid details")
+    end
   end
 
   defp open_new_card_modal(view) do
@@ -86,9 +144,25 @@ defmodule TodoWeb.LiveViewBoardTest do
     view
   end
 
-  defp submit_card_form(view, values) do
+  defp open_edit_card_modal(view, card) do
+    view
+    |> element("##{card.id}", card.name)
+    |> render_click()
+
+    view
+  end
+
+  defp submit_new_card_form(view, values) do
     view
     |> form("#new-card-form", card: values)
+    |> render_submit()
+
+    view
+  end
+
+  defp submit_edit_card_form(view, values) do
+    view
+    |> form("#edit-card-form", card: values)
     |> render_submit()
 
     view

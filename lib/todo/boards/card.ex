@@ -18,7 +18,7 @@ defmodule Todo.Boards.Card do
   @doc false
   def changeset(card, attrs) do
     card
-    |> cast(attrs, [:name, :description, :archived, :due_date])
+    |> cast(attrs, [:name, :description, :archived, :due_date, :list_id])
     |> validate_required([:name])
   end
 end
