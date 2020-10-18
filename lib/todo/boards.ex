@@ -236,5 +236,4 @@ defmodule Todo.Boards do
     |> Card.changeset(attrs)
     |> Repo.update()
   end
-
 end

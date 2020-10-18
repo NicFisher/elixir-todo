@@ -12,8 +12,12 @@ defmodule TodoWeb.EditCardComponent do
      assign(socket, modal_state: "hidden", error: false, changeset: Boards.change_card(%Card{}))}
   end
 
-  def update(%{action: "display-edit-card-component", modal_state: modal_state, card: card}, socket) do
-    {:ok, assign(socket, modal_state: modal_state, changeset: Boards.change_card(card), card: card)}
+  def update(
+        %{action: "display-edit-card-component", modal_state: modal_state, card: card},
+        socket
+      ) do
+    {:ok,
+     assign(socket, modal_state: modal_state, changeset: Boards.change_card(card), card: card)}
   end
 
   def update(assigns, socket) do
@@ -25,12 +29,14 @@ defmodule TodoWeb.EditCardComponent do
   end
 
   def handle_event("update", %{"card" => attrs}, socket) do
-    with {:ok, updated_card} <-
+    with {:ok, _updated_card} <-
            Todo.Boards.update_card(socket.assigns.card, attrs) do
       send(self(), {:refresh_board})
       {:noreply, assign(socket, modal_state: "hidden", error: false)}
     else
-      _error -> {:noreply, assign(socket, :error, true)}
+      _error ->
+        {:noreply,
+         assign(socket, error: true, changeset: Boards.change_card(socket.assigns.card, attrs))}
     end
   end
 end
