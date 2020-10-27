@@ -12,7 +12,10 @@ defmodule TodoWeb.ArchiveCardComponent do
      assign(socket, modal_state: "hidden", error: false, changeset: Boards.change_card(%Card{}))}
   end
 
-  def update(%{action: "display-archive-card-component", modal_state: modal_state, card: card}, socket) do
+  def update(
+        %{action: "display-archive-card-component", modal_state: modal_state, card: card},
+        socket
+      ) do
     {:ok, assign(socket, modal_state: modal_state, card: card)}
   end
 

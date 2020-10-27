@@ -160,7 +160,11 @@ defmodule TodoWeb.LiveViewBoardTest do
       |> element("#archive-#{card.id}")
       |> render_click()
 
-      assert has_element?(view, "#archive-card-modal", "Are you sure you want to archive this card?")
+      assert has_element?(
+               view,
+               "#archive-card-modal",
+               "Are you sure you want to archive this card?"
+             )
     end
 
     test "submitting a archive-card-form archives the card and updates the board", %{
