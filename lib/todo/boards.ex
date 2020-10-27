@@ -56,9 +56,11 @@ defmodule Todo.Boards do
   def get_board!(id, user_id) do
     query =
       from board in Todo.Boards.Board,
+        left_join: lists in Todo.Boards.List,
+        on: lists.board_id == board.id and lists.archived == false,
+        left_join: cards in Todo.Boards.Card,
+        on: cards.list_id == lists.id and cards.archived == false,
         where: board.id == ^id and board.user_id == ^user_id,
-        left_join: lists in assoc(board, :lists),
-        left_join: cards in assoc(lists, :cards),
         order_by: [asc: lists.position, desc: cards.inserted_at],
         preload: [lists: {lists, cards: cards}]
 
