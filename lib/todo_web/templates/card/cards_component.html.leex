@@ -1,9 +1,8 @@
-<%# <%= require IEx; IEx.pry %>
-<ul id="cards-<%= assigns.list.position %>"> <%# Update this so it's unique %>
+<ul id="cards-<%= assigns.list.position %>" class="cards">
   <%= for card <- assigns.cards do %>
     <li id="<%=card.id %>" phx-click="display-edit-card-component" phx-value-id="edit-card-component-<%= assigns.list.id %>" phx-value-card-id="<%= card.id %>" phx-target="<%= @myself %>" class="mb-2 cursor-pointer">
-      <div class="border-2 border-gray-200 rounded-lg bg-white mx-auto m-1 p-4 notification-box break-normal">
-        <span class="float-right">
+      <div class="card border-2 border-gray-200 rounded-lg bg-white mx-auto m-1 p-4 notification-box break-normal">
+        <a id="archive-<%=card.id %>" phx-click="display-archive-card-component" phx-value-id="archive-card-component-<%= assigns.list.id %>" phx-value-card-id="<%= card.id %>" phx-target="<%= @myself %>" class="cross-svg float-right hover:bg-gray-200 rounded-full">
           <svg
             class="fill-current text-gray-600"
             xmlns="http://www.w3.org/2000/svg"
@@ -16,12 +15,13 @@
               d="M16.24 14.83a1 1 0 0 1-1.41 1.41L12 13.41l-2.83 2.83a1 1 0 0 1-1.41-1.41L10.59 12 7.76 9.17a1 1 0 0 1 1.41-1.41L12 10.59l2.83-2.83a1 1 0 0 1 1.41 1.41L13.41 12l2.83 2.83z"
             />
           </svg>
-        </span>
-        <div class="text-sm text-gray-800">
+        </a>
+        <span class="text-sm text-gray-800">
           <%= card.name %>
-        </div>
+        </span>
       </div>
     </li>
   <% end %>
+  <%= live_component @socket, TodoWeb.ArchiveCardComponent, id: "archive-card-component-#{assigns.list.id}", cards: assigns.cards %>
   <%= live_component @socket, TodoWeb.EditCardComponent, id: "edit-card-component-#{assigns.list.id}", lists: assigns.lists %>
 </ul>

@@ -13,3 +13,13 @@
     margin-right: 0px;
   }
 }
+
+.cards {
+  .card {
+    height: 64px;
+
+    .cross-svg {
+      padding: 2px;
+    }
+  }
+}

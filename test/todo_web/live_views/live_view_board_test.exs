@@ -136,6 +136,55 @@ defmodule TodoWeb.LiveViewBoardTest do
     end
   end
 
+  describe "archive card modal" do
+    test "does not show archive card component when page loaded", %{
+      auth_conn: auth_conn,
+      board: board
+    } do
+      {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
+
+      assert view
+             |> element("#archive-modal-overlay")
+             |> render() =~ "class=\"hidden"
+    end
+
+    test "opens archive card modal when selecting cross on the card", %{
+      auth_conn: auth_conn,
+      board: board,
+      list: list
+    } do
+      {:ok, card} = Factory.create_card("Some task", "The description", list)
+      {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
+
+      view
+      |> element("#archive-#{card.id}")
+      |> render_click()
+
+      assert has_element?(
+               view,
+               "#archive-card-modal",
+               "Are you sure you want to archive this card?"
+             )
+    end
+
+    test "submitting a archive-card-form archives the card and updates the board", %{
+      auth_conn: auth_conn,
+      board: board,
+      list: list
+    } do
+      {:ok, card} = Factory.create_card("Some task", "The description", list)
+      {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
+
+      assert has_element?(view, "#cards-1", "Some task")
+
+      view
+      |> open_archive_card_modal(card)
+      |> submit_archive_card_form()
+
+      refute has_element?(view, "#cards-1", "Some task")
+    end
+  end
+
   defp open_new_card_modal(view) do
     view
     |> element("#add-new-card-button", "+ Add a card")
@@ -152,6 +201,14 @@ defmodule TodoWeb.LiveViewBoardTest do
     view
   end
 
+  defp open_archive_card_modal(view, card) do
+    view
+    |> element("#archive-#{card.id}")
+    |> render_click()
+
+    view
+  end
+
   defp submit_new_card_form(view, values) do
     view
     |> form("#new-card-form", card: values)
@@ -163,6 +220,14 @@ defmodule TodoWeb.LiveViewBoardTest do
   defp submit_edit_card_form(view, values) do
     view
     |> form("#edit-card-form", card: values)
+    |> render_submit()
+
+    view
+  end
+
+  defp submit_archive_card_form(view) do
+    view
+    |> form("#archive-card-form")
     |> render_submit()
 
     view
