@@ -2,7 +2,7 @@
   <%= for card <- assigns.cards do %>
     <li id="<%=card.id %>" phx-click="display-edit-card-component" phx-value-id="edit-card-component-<%= assigns.list.id %>" phx-value-card-id="<%= card.id %>" phx-target="<%= @myself %>" class="mb-2 cursor-pointer">
       <div class="card border-2 border-gray-200 rounded-lg bg-white mx-auto m-1 p-4 notification-box break-normal">
-        <a id="archive-<%=card.id %>" phx-click="display-archive-card-component" phx-value-id="archive-card-component-<%= assigns.list.id %>" phx-value-card-id="<%= card.id %>" phx-target="<%= @myself %>" class="cross-svg float-right hover:bg-gray-200 rounded-full">
+        <a id="archive-card-<%=card.id %>" phx-click="display-archive-card-component" phx-value-id="archive-card-component-<%= assigns.list.id %>" phx-value-card-id="<%= card.id %>" phx-target="<%= @myself %>" class="cross-svg float-right hover:bg-gray-200 rounded-full">
           <svg
             class="fill-current text-gray-600"
             xmlns="http://www.w3.org/2000/svg"
@@ -22,6 +22,4 @@
       </div>
     </li>
   <% end %>
-  <%= live_component @socket, TodoWeb.ArchiveCardComponent, id: "archive-card-component-#{assigns.list.id}", cards: assigns.cards %>
-  <%= live_component @socket, TodoWeb.EditCardComponent, id: "edit-card-component-#{assigns.list.id}", lists: assigns.lists %>
 </ul>

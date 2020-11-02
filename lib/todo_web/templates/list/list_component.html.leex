@@ -14,5 +14,7 @@
   <div phx-click="display-new-card-component" phx-value-id="new-card-component-<%= assigns.list.id %>" phx-target="<%= @myself %>" id="add-new-card-button" class="flex font-semibold h-12 p-4 rounded-lg text-gray-600 bg-gray-100 items-center cursor-pointer">
     + Add a card
   </div>
-  <%= live_component @socket, TodoWeb.NewCardComponent, id: "new-card-component-#{assigns.list.id}", list: assigns.list %>
+  <%= live_component @socket, TodoWeb.NewCardComponent, id: "new-card-component-#{assigns.list.id}", list: @list %>
+  <%= live_component @socket, TodoWeb.EditCardComponent, id: "edit-card-component-#{@list.id}", lists: @lists, list: @list %>
+  <%= live_component @socket, TodoWeb.ArchiveCardComponent, id: "archive-card-component-#{assigns.list.id}", list: @list %>
 </div>

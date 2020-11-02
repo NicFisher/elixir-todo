@@ -1,5 +1,5 @@
 <div class="flex items-center flex-col">
-  <h2 class="text-gray-800 text-3xl font-semibold my-6">Boards Page</h2>
+  <h2 class="text-gray-800 text-3xl font-semibold my-6 boards-header">Boards</h2>
   <%= link "New Board", to: Routes.board_path(@conn, :new), method: :get, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
   <div class="flex justify-center flex-wrap w-9/12 mt-12">
     <%= for board <- @boards do %>
