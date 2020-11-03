@@ -55,7 +55,11 @@ defmodule TodoWeb.LiveViewBoardTest do
       view
       |> open_archive_board_modal(board)
 
-      assert has_element?(view, "#archive-board-modal", "Are you sure you want to archive this board?")
+      assert has_element?(
+               view,
+               "#archive-board-modal",
+               "Are you sure you want to archive this board?"
+             )
     end
 
     test "Archiving the board updates the board to archived and shows board index page", %{
@@ -67,7 +71,6 @@ defmodule TodoWeb.LiveViewBoardTest do
       view
       |> open_archive_board_modal(board)
       |> submit_archive_board_form
-
 
       assert_redirected(view, "/boards")
 
@@ -255,6 +258,7 @@ defmodule TodoWeb.LiveViewBoardTest do
     view
     |> element("#archive-board-#{board.id}")
     |> render_click()
+
     view
   end
 

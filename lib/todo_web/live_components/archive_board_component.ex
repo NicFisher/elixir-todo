@@ -28,9 +28,9 @@ defmodule TodoWeb.ArchiveBoardComponent do
   end
 
   def handle_event("update", %{"board" => attrs}, %{assigns: %{board: board}} = socket) do
-    with {:ok, updated_board} <-
+    with {:ok, _updated_board} <-
            Todo.Boards.update_board(board, attrs) do
-     {:noreply, redirect(socket, to: "/boards")}
+      {:noreply, redirect(socket, to: "/boards")}
     else
       _error ->
         {:noreply,
