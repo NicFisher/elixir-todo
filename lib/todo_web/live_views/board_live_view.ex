@@ -20,4 +20,19 @@ defmodule TodoWeb.BoardLiveView do
 
     {:noreply, assign(socket, board: board)}
   end
+
+  def handle_event(
+        "display-archive-board-component",
+        %{"id" => id},
+        %{assigns: %{board: board}} = socket
+      ) do
+    send_update(TodoWeb.ArchiveBoardComponent,
+      id: id,
+      board: board,
+      modal_state: "display",
+      action: "display-archive-card-component"
+    )
+
+    {:noreply, socket}
+  end
 end

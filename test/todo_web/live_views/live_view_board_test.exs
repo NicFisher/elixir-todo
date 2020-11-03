@@ -1,5 +1,6 @@
 defmodule TodoWeb.LiveViewBoardTest do
   use TodoWeb.ConnCase
+  use ExUnit.Case, async: true
   alias Todo.Accounts.{User, Guardian}
   alias Todo.Accounts
   import Phoenix.ConnTest
@@ -21,17 +22,61 @@ defmodule TodoWeb.LiveViewBoardTest do
     {:ok, auth_conn: auth_conn, conn: conn, user: user, board: board, list: list}
   end
 
-  test "displays board, list and cards", %{
-    auth_conn: auth_conn,
-    board: board,
-    list: list
-  } do
-    {:ok, _card} = Factory.create_card("Do something", "The description", list)
-    {:ok, view, html} = live(auth_conn, "boards/#{board.id}")
+  describe "show board" do
+    test "displays board, list and cards", %{
+      auth_conn: auth_conn,
+      board: board,
+      list: list
+    } do
+      {:ok, _card} = Factory.create_card("Do something", "The description", list)
+      {:ok, view, html} = live(auth_conn, "boards/#{board.id}")
 
-    assert html =~ "First Board"
-    assert has_element?(view, "#lists", "New List")
-    assert has_element?(view, "#cards-1", "Do something")
+      assert html =~ "First Board"
+      assert has_element?(view, "#lists", "New List")
+      assert has_element?(view, "#cards-1", "Do something")
+    end
+
+    test "archived board does not show lists", %{
+      auth_conn: auth_conn,
+      board: board
+    } do
+      {:ok, updated_board} = Todo.Boards.update_board(board, %{archived: true})
+      {:ok, _view, html} = live(auth_conn, "boards/#{updated_board.id}")
+
+      assert html =~ "First Board has been archived"
+    end
+
+    test "select Archive Board opens modal", %{
+      auth_conn: auth_conn,
+      board: board
+    } do
+      {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
+
+      view
+      |> open_archive_board_modal(board)
+
+      assert has_element?(
+               view,
+               "#archive-board-modal",
+               "Are you sure you want to archive this board?"
+             )
+    end
+
+    test "Archiving the board updates the board to archived and shows board index page", %{
+      auth_conn: auth_conn,
+      board: board
+    } do
+      {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
+
+      view
+      |> open_archive_board_modal(board)
+      |> submit_archive_board_form
+
+      assert_redirected(view, "/boards")
+
+      board = Todo.Repo.get_by(Todo.Boards.Board, id: board.id)
+      assert board.archived == true
+    end
   end
 
   describe "new card modal" do
@@ -42,7 +87,7 @@ defmodule TodoWeb.LiveViewBoardTest do
       {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
 
       assert view
-             |> element("#new-modal-overlay")
+             |> element("#new-card-modal-overlay-1")
              |> render() =~ "class=\"hidden"
     end
 
@@ -55,7 +100,7 @@ defmodule TodoWeb.LiveViewBoardTest do
       view
       |> open_new_card_modal()
 
-      assert has_element?(view, "#new-card-modal", "Add Card")
+      assert has_element?(view, "#new-card-modal-1", "Add Card")
     end
 
     test "submitting a new-card-form creates card and adds it to the board", %{
@@ -78,7 +123,7 @@ defmodule TodoWeb.LiveViewBoardTest do
       |> open_new_card_modal()
       |> submit_new_card_form(%{name: "", description: ""})
 
-      assert has_element?(view, "#new-card-modal", "Invalid details")
+      assert has_element?(view, "#new-card-modal-1", "Invalid details")
     end
   end
 
@@ -90,7 +135,7 @@ defmodule TodoWeb.LiveViewBoardTest do
       {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
 
       assert view
-             |> element("#edit-modal-overlay")
+             |> element("#edit-card-modal-overlay-1")
              |> render() =~ "class=\"hidden"
     end
 
@@ -106,7 +151,7 @@ defmodule TodoWeb.LiveViewBoardTest do
       |> element("##{card.id}", "Some task")
       |> render_click()
 
-      assert has_element?(view, "#edit-card-modal", "Update Card")
+      assert has_element?(view, "#edit-card-modal-1", "Update Card")
     end
 
     test "submitting a edit-card-form updates card and the board", %{
@@ -132,7 +177,7 @@ defmodule TodoWeb.LiveViewBoardTest do
       |> open_edit_card_modal(card)
       |> submit_edit_card_form(%{name: "", description: ""})
 
-      assert has_element?(view, "#edit-card-modal", "Invalid details")
+      assert has_element?(view, "#edit-card-modal-1", "Invalid details")
     end
   end
 
@@ -144,7 +189,7 @@ defmodule TodoWeb.LiveViewBoardTest do
       {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
 
       assert view
-             |> element("#archive-modal-overlay")
+             |> element("#archive-card-modal-overlay-1")
              |> render() =~ "class=\"hidden"
     end
 
@@ -157,12 +202,12 @@ defmodule TodoWeb.LiveViewBoardTest do
       {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
 
       view
-      |> element("#archive-#{card.id}")
+      |> element("#archive-card-#{card.id}")
       |> render_click()
 
       assert has_element?(
                view,
-               "#archive-card-modal",
+               "#archive-card-modal-1",
                "Are you sure you want to archive this card?"
              )
     end
@@ -203,7 +248,15 @@ defmodule TodoWeb.LiveViewBoardTest do
 
   defp open_archive_card_modal(view, card) do
     view
-    |> element("#archive-#{card.id}")
+    |> element("#archive-card-#{card.id}")
+    |> render_click()
+
+    view
+  end
+
+  defp open_archive_board_modal(view, board) do
+    view
+    |> element("#archive-board-#{board.id}")
     |> render_click()
 
     view
@@ -228,6 +281,14 @@ defmodule TodoWeb.LiveViewBoardTest do
   defp submit_archive_card_form(view) do
     view
     |> form("#archive-card-form")
+    |> render_submit()
+
+    view
+  end
+
+  defp submit_archive_board_form(view) do
+    view
+    |> form("#archive-board-form")
     |> render_submit()
 
     view
