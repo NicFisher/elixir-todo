@@ -18,18 +18,54 @@
             <%= if assigns.error do %>
               <p class="mx-8 px-8 mb-2 alert alert-danger">Invalid details</h2>
             <% end %>
-            <%= form_for assigns.changeset, "#", [phx_submit: :update, phx_target: @myself, class: "px-8 pb-8 mb-4", id: "edit-card-form"], fn f -> %>
+            <%= form_for assigns.changeset, "#", [phx_submit: :update, phx_change: "update-form", phx_target: @myself, class: "px-8 pb-8 mb-4", id: "edit-card-form"], fn f -> %>
               <div class="mb-4">
                 <%= label f, :name, class: "control-label block text-gray-700 text-sm font-bold mb-2" %>
-                <%= text_input f, :name, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline align-middle", placeholder: "Todo List" %>
+                <%= text_input f, :name, class: "appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline align-middle", placeholder: "Todo List" %>
               </div>
               <div class="mb-4">
                 <%= label f, :description, class: "control-label block text-gray-700 text-sm font-bold mb-2" %>
-                <%= textarea f, :description, rows: 6, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline align-middle", placeholder: "Todo List" %>
+                <%= textarea f, :description, rows: 6, class: "appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline align-middle", placeholder: "Todo List" %>
               </div>
               <div class="mb-4">
-                <%= select f, :list_id, Enum.map(assigns.lists, fn %{id: id, name: name} -> { name, id } end), class: "bg-white shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline align-middle" %>
+                <label class="control-label block text-gray-700 text-sm font-bold mb-2" for="card_description">List</label>
+                <%= select f, :list_id, Enum.map(assigns.lists, fn %{id: id, name: name} -> { name, id } end), class: "bg-white appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline align-middle" %>
               </div>
+              <%= if assigns.display_due_date || f.data.due_date || Map.has_key?(assigns.changeset.changes, :due_date) do %>
+                <% due_date = f.data.due_date || (Map.has_key?(assigns.changeset.changes, :due_date) && assigns.changeset.changes.due_date) %>
+                <div class="mb-4">
+                  <%= label f, :due_date, class: "control-label", class: "block text-gray-700 text-sm font-bold mb-2" %>
+                  <select id="card_due_date_day" name="card[due_date][day]" class="bg-white appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline align-middle" >
+                    <%= for item <- 1..31 do %>
+                      <%= if due_date && item == due_date.day do %>
+                        <option selected value=<%= item %>><%= item %></option>
+                      <% else %>
+                        <option value=<%= item %>><%= item %></option>
+                      <% end %>
+                    <% end %>
+                  </select>
+                  <select id="card_due_date_month" name="card[due_date][month]" class="bg-white appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline align-middle">
+                    <%= for {value, month} <- Todo.Boards.Card.card_due_date_months() do %>
+                      <%= if due_date && value == due_date.month do %>
+                        <option selected value=<%= value %>><%= month %></option>
+                      <% else %>
+                        <option value=<%= value %>><%= month %></option>
+                      <% end %>
+                    <% end %>
+                  </select>
+                  <select id="card_due_date_year" name="card[due_date][year]" class="bg-white appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline align-middle">
+                    <%= for year <- Todo.Boards.Card.card_due_date_years() do %>
+                      <%= if due_date && year == due_date.year do %>
+                        <option selected value=<%= year %>><%= year %></option>
+                      <% else %>
+                        <option value=<%= year %>><%= year %></option>
+                      <% end %>
+                    <% end %>
+                  </select>
+                </div>
+              <% else %>
+                <span phx-click="display-due-date" phx-target="<%= @myself %>" class="text-gray-600 text-sm font-bold mb-2 p-2 border rounded">+ Add due date</span>
+              <% end %>
               <div class="flex items-center justify-center mt-10">
                 <%= submit "Update Card", phx_disable_with: "Updating Card", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" %>
               </div>
