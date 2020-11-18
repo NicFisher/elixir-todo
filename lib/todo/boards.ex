@@ -31,12 +31,32 @@ defmodule Todo.Boards do
 
   """
   def list_boards_for_user(user_id) do
+    # Update this to get the board from the user and not get all boards or add index
     from(b in Board,
       where: b.user_id == ^user_id,
       where: b.archived == false,
       order_by: [desc: b.updated_at]
     )
     |> Repo.all()
+  end
+
+  @doc """
+  Returns list of shared boards for a specific user.
+
+  ## Examples
+
+      iex> list_shared_boards_for_user(123)
+      [%Board{}, ...]
+
+  """
+  def list_shared_boards_for_user(user_id) do
+    from(u in Todo.Accounts.User,
+      where: u.id == ^user_id,
+      join: shared_boards in assoc(u, :shared_boards),
+      on: shared_boards.archived == false,
+      select: shared_boards,
+      order_by: [desc: shared_boards.updated_at]
+    ) |> Todo.Repo.all
   end
 
   @doc """
@@ -63,6 +83,36 @@ defmodule Todo.Boards do
         where: board.id == ^id and board.user_id == ^user_id,
         order_by: [asc: lists.position, desc: cards.inserted_at],
         preload: [lists: {lists, cards: cards}]
+
+    Repo.one!(query)
+  end
+
+  @doc """
+  Gets a single board from the shared boards with the lists and cards for a user. The lists are ordered by list position.
+
+  Raises `Ecto.NoResultsError` if the Board does not exist.
+
+  ## Examples
+
+      iex> get_board!(123, 12345678)
+      %Board{}
+
+      iex> get_board!(456, 12345678)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_shared_board!(id, user_id) do
+    query =
+      from board in Todo.Boards.Board,
+      join: board_users in Todo.Boards.BoardUser,
+      on: board_users.board_id == ^id and board_users.user_id == ^user_id,
+      left_join: lists in Todo.Boards.List,
+      on: lists.board_id == board.id and lists.archived == false,
+      left_join: cards in Todo.Boards.Card,
+      on: cards.list_id == lists.id and cards.archived == false,
+      where: board.id == ^id,
+      order_by: [asc: lists.position, desc: cards.inserted_at],
+      preload: [lists: {lists, cards: cards}]
 
     Repo.one!(query)
   end

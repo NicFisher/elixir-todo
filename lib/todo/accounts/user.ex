@@ -11,7 +11,6 @@ defmodule Todo.Accounts.User do
     has_many :boards, Todo.Boards.Board
     has_many :board_users, Todo.Boards.BoardUser
     has_many :shared_boards, through: [:board_users, :board]
-    # has_many :boards_users, through: [:shared_board_users, :board]
 
     timestamps()
   end

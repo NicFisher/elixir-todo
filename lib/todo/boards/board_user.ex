@@ -16,13 +16,8 @@ defmodule Todo.Boards.BoardUser do
   def changeset(board_user, attrs) do
     board_user
     |> cast(attrs, [:user_id, :board_id])
-    # |> foreign_key_constraint(:user_id)
-    # |> foreign_key_constraint(:board_id)
     |> validate_required([:user_id, :board_id])
-
-  #   |> unique_constraint([:user, :project],
-  #   name: :user_id_project_id_unique_index,
-  #   message: @already_exists
-  # )
+    |> assoc_constraint(:user)
+    |> assoc_constraint(:board)
   end
 end

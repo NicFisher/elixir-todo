@@ -14,9 +14,7 @@
       <div class="w-full block flex-grow flex items-center w-auto">
         <div class="text-base flex-grow">
           <%= link "My Boards", to: Routes.board_path(@conn, :index), method: :get, class: "block inline-block mt-0 text-white mr-4 hover:text-blue-700" %>
-          <a href="#responsive-header" class="block inline-block mt-0 text-white hover:text-blue-700 mr-4">
-            Shared Boards
-          </a>
+          <%= link "Shared Boards", to: Routes.shared_board_path(@conn, :index), method: :get, class: "block inline-block mt-0 text-white mr-4 hover:text-blue-700" %>
           <%= link "Account", to: Routes.user_path(@conn, :edit, @conn.assigns.current_user.id), method: :get, class: "block inline-block mt-0 text-white hover:text-blue-700 mr-4" %>
           <a href="#responsive-header" class="block inline-block mt-0 text-white hover:text-blue-700">
             Share

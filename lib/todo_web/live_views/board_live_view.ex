@@ -11,6 +11,16 @@ defmodule TodoWeb.BoardLiveView do
     with {:ok, user} <- Guardian.user_from_token(token),
          board = Boards.get_board!(id, user.id),
          changeset = Boards.change_board(board) do
+          # require IEx; IEx.pry
+      {:ok, assign(socket, board: board, user: user, changeset: changeset)}
+    end
+  end
+
+  def mount(%{"shared_board_id" => id}, %{"guardian_default_token" => token}, socket) do
+    with {:ok, user} <- Guardian.user_from_token(token),
+         board = Boards.get_shared_board!(id, user.id),
+         changeset = Boards.change_board(board) do
+          # require IEx; IEx.pry
       {:ok, assign(socket, board: board, user: user, changeset: changeset)}
     end
   end
