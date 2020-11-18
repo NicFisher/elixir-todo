@@ -5,7 +5,6 @@ defmodule Todo.Boards.BoardUser do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "board_users" do
-    field :active, :boolean, default: true
     belongs_to :user, User, foreign_key: :user_id, type: :binary_id
     belongs_to :board, Board, foreign_key: :board_id, type: :binary_id
 
