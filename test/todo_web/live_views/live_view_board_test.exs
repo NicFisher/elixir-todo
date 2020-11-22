@@ -230,6 +230,183 @@ defmodule TodoWeb.LiveViewBoardTest do
     end
   end
 
+  describe "shared board - show" do
+    test "displays shared board, list and cards", %{
+      auth_conn: auth_conn,
+      board: board,
+      list: list,
+      user: user
+    } do
+      {:ok, _board_user} = Factory.create_board_user(user.id, board.id)
+      {:ok, _card} = Factory.create_card("Do something", "The description", list)
+      {:ok, view, html} = live(auth_conn, "/shared-boards/boards/#{board.id}")
+
+      assert html =~ "First Board"
+      assert has_element?(view, "#lists", "New List")
+      assert has_element?(view, "#cards-1", "Do something")
+    end
+
+    test "raises error if board user does not exist between board and user", %{
+      auth_conn: auth_conn,
+      board: board,
+      list: list
+    } do
+      {:ok, _card} = Factory.create_card("Do something", "The description", list)
+
+      assert_raise(Ecto.NoResultsError, fn ->
+        raise live(auth_conn, "/shared-boards/boards/#{board.id}")
+      end)
+    end
+
+    test "archived board does not show lists", %{
+      auth_conn: auth_conn,
+      board: board,
+      user: user
+    } do
+      {:ok, _board_user} = Factory.create_board_user(user.id, board.id)
+      {:ok, updated_board} = Todo.Boards.update_board(board, %{archived: true})
+      {:ok, _view, html} = live(auth_conn, "shared-boards/boards/#{updated_board.id}")
+
+      assert html =~ "First Board has been archived"
+    end
+
+    test "Archive Board button does not show for shared user", %{
+      auth_conn: auth_conn,
+      board: board,
+      user: user
+    } do
+      {:ok, _board_user} = Factory.create_board_user(user.id, board.id)
+      {:ok, view, _html} = live(auth_conn, "shared-boards/boards/#{board.id}")
+
+      refute has_element?(
+               view,
+               "#archive-board-#{board.id}",
+               "Are you sure you want to archive this board?"
+             )
+    end
+  end
+
+  describe "shared board - new card modal" do
+    test "does not show new card component when page loaded", %{
+      auth_conn: auth_conn,
+      board: board,
+      user: user
+    } do
+      {:ok, _board_user} = Factory.create_board_user(user.id, board.id)
+      {:ok, view, _html} = live(auth_conn, "shared-boards/boards/#{board.id}")
+
+      assert view
+             |> element("#new-card-modal-overlay-1")
+             |> render() =~ "class=\"hidden"
+    end
+
+    test "opens new card modal when selecting Add a card link", %{
+      auth_conn: auth_conn,
+      board: board,
+      user: user
+    } do
+      {:ok, _board_user} = Factory.create_board_user(user.id, board.id)
+      {:ok, view, _html} = live(auth_conn, "shared-boards/boards/#{board.id}")
+
+      view
+      |> open_new_card_modal()
+
+      assert has_element?(view, "#new-card-modal-1", "Add Card")
+    end
+
+    test "submitting a new-card-form creates card and adds it to the board", %{
+      auth_conn: auth_conn,
+      board: board,
+      user: user
+    } do
+      {:ok, _board_user} = Factory.create_board_user(user.id, board.id)
+      {:ok, view, _html} = live(auth_conn, "shared-boards/boards/#{board.id}")
+
+      view
+      |> open_new_card_modal()
+      |> submit_new_card_form(%{name: "This is a new card", description: "description"})
+
+      assert has_element?(view, "#cards-1", "This is a new card")
+    end
+
+    test "invalid new-card-form returns error", %{auth_conn: auth_conn, board: board, user: user} do
+      {:ok, _board_user} = Factory.create_board_user(user.id, board.id)
+      {:ok, view, _html} = live(auth_conn, "shared-boards/boards/#{board.id}")
+
+      view
+      |> open_new_card_modal()
+      |> submit_new_card_form(%{name: "", description: ""})
+
+      assert has_element?(view, "#new-card-modal-1", "Invalid details")
+    end
+  end
+
+  describe "shared board - edit card modal" do
+    test "does not show edit card component when page loaded", %{
+      auth_conn: auth_conn,
+      board: board,
+      user: user
+    } do
+      {:ok, _board_user} = Factory.create_board_user(user.id, board.id)
+      {:ok, view, _html} = live(auth_conn, "shared-boards/boards/#{board.id}")
+
+      assert view
+             |> element("#edit-card-modal-overlay-1")
+             |> render() =~ "class=\"hidden"
+    end
+
+    test "opens edit card modal when selecting a card", %{
+      auth_conn: auth_conn,
+      board: board,
+      list: list,
+      user: user
+    } do
+      {:ok, _board_user} = Factory.create_board_user(user.id, board.id)
+      {:ok, card} = Factory.create_card("Some task", "The description", list)
+      {:ok, view, _html} = live(auth_conn, "shared-boards/boards/#{board.id}")
+
+      view
+      |> element("##{card.id}", "Some task")
+      |> render_click()
+
+      assert has_element?(view, "#edit-card-modal-1", "Update Card")
+    end
+
+    test "submitting a edit-card-form updates card and the board", %{
+      auth_conn: auth_conn,
+      board: board,
+      list: list,
+      user: user
+    } do
+      {:ok, _board_user} = Factory.create_board_user(user.id, board.id)
+      {:ok, card} = Factory.create_card("Some task", "The description", list)
+      {:ok, view, _html} = live(auth_conn, "shared-boards/boards/#{board.id}")
+
+      view
+      |> open_edit_card_modal(card)
+      |> submit_edit_card_form(%{name: "Updated name", description: "Updated description"})
+
+      assert has_element?(view, "#cards-1", "Updated name")
+    end
+
+    test "invalid new-card-form returns error", %{
+      auth_conn: auth_conn,
+      board: board,
+      list: list,
+      user: user
+    } do
+      {:ok, _board_user} = Factory.create_board_user(user.id, board.id)
+      {:ok, card} = Factory.create_card("Some task", "The description", list)
+      {:ok, view, _html} = live(auth_conn, "shared-boards/boards/#{board.id}")
+
+      view
+      |> open_edit_card_modal(card)
+      |> submit_edit_card_form(%{name: "", description: ""})
+
+      assert has_element?(view, "#edit-card-modal-1", "Invalid details")
+    end
+  end
+
   defp open_new_card_modal(view) do
     view
     |> element("#add-new-card-button", "+ Add a card")

@@ -1,5 +1,5 @@
 defmodule Todo.Factory do
-  alias Todo.Boards.{List, Board, Card}
+  alias Todo.Boards.{List, Board, Card, BoardUser}
   alias Todo.Accounts.User
   alias Todo.Repo
 
@@ -42,6 +42,11 @@ defmodule Todo.Factory do
       name: name,
       description: description
     })
+    |> Repo.insert()
+  end
+
+  def create_board_user(user_id, board_id) do
+    BoardUser.changeset(%Todo.Boards.BoardUser{}, %{user_id: user_id, board_id: board_id})
     |> Repo.insert()
   end
 end
