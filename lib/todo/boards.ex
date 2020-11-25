@@ -6,7 +6,7 @@ defmodule Todo.Boards do
   import Ecto.Query, warn: false
   alias Todo.Repo
 
-  alias Todo.Boards.{Board, List, Lists.ListManager, Card}
+  alias Todo.Boards.{Board, List, Lists.ListManager, Card, BoardUser}
 
   @doc """
   Returns the list of boards.
@@ -40,6 +40,48 @@ defmodule Todo.Boards do
   end
 
   @doc """
+  Returns list of shared boards for a specific user.
+
+  ## Examples
+
+      iex> list_shared_boards_for_user(123)
+      [%Board{}, ...]
+
+  """
+  def list_shared_boards_for_user(user_id) do
+    from(u in Todo.Accounts.User,
+      where: u.id == ^user_id,
+      join: shared_boards in assoc(u, :shared_boards),
+      on: shared_boards.archived == false,
+      select: shared_boards,
+      order_by: [desc: shared_boards.updated_at]
+    )
+    |> Todo.Repo.all()
+  end
+
+  @doc """
+  Gets a single board without the lists and cards.
+
+  Raises `Ecto.NoResultsError` if the Board does not exist.
+
+  ## Examples
+
+      iex> get_only_board!(123, 12345678)
+      %Board{}
+
+      iex> get_only_board!(456, 12345678)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_only_board!(id, user_id) do
+    query =
+      from board in Todo.Boards.Board,
+        where: board.id == ^id and board.user_id == ^user_id
+
+    Repo.one!(query)
+  end
+
+  @doc """
   Gets a single board with the lists and cards for a user. The lists are ordered by list position.
 
   Raises `Ecto.NoResultsError` if the Board does not exist.
@@ -68,6 +110,60 @@ defmodule Todo.Boards do
   end
 
   @doc """
+  Gets a single shared board without cards or lists.
+
+  Raises `Ecto.NoResultsError` if the Board does not exist.
+
+  ## Examples
+
+      iex> get_only_shared_board!(123, 12345678)
+      %Board{}
+
+      iex> get_only_shared_board!(456, 12345678)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_only_shared_board!(id, user_id) do
+    query =
+      from board in Todo.Boards.Board,
+        join: board_users in Todo.Boards.BoardUser,
+        on: board_users.board_id == ^id and board_users.user_id == ^user_id,
+        where: board.id == ^id
+
+    Repo.one!(query)
+  end
+
+  @doc """
+  Gets a single shared board from the shared boards with the lists and cards for a user. The lists are ordered by list position.
+
+  Raises `Ecto.NoResultsError` if the Board does not exist.
+
+  ## Examples
+
+      iex> get_shared_board!(123, 12345678)
+      %Board{}
+
+      iex> get_shared_board!(456, 12345678)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_shared_board!(id, user_id) do
+    query =
+      from board in Todo.Boards.Board,
+        join: board_users in Todo.Boards.BoardUser,
+        on: board_users.board_id == ^id and board_users.user_id == ^user_id,
+        left_join: lists in Todo.Boards.List,
+        on: lists.board_id == board.id and lists.archived == false,
+        left_join: cards in Todo.Boards.Card,
+        on: cards.list_id == lists.id and cards.archived == false,
+        where: board.id == ^id,
+        order_by: [asc: lists.position, desc: cards.inserted_at],
+        preload: [lists: {lists, cards: cards}]
+
+    Repo.one!(query)
+  end
+
+  @doc """
   Gets a single list from a board for the user.
 
   Raises `Ecto.NoResultsError` if the Board does not exist.
@@ -88,6 +184,35 @@ defmodule Todo.Boards do
         on: bl.board_id == b.id,
         where:
           b.id == ^board_id and b.user_id == ^user_id and bl.id == ^list_id and
+            bl.archived == false,
+        select: bl
+
+    Repo.one!(query)
+  end
+
+  @doc """
+  Gets a single shared board list from a board for the user.
+
+  Raises `Ecto.NoResultsError` if the Board does not exist.
+
+  ## Examples
+
+      iex> get_shared_board_list!(123, 456, 789)
+      %Board{}
+
+      iex> get_shared_board_list!(456, 123, 789)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_shared_board_list!(list_id, board_id, user_id) do
+    query =
+      from b in Board,
+        join: board_users in Todo.Boards.BoardUser,
+        on: board_users.board_id == ^board_id and board_users.user_id == ^user_id,
+        join: bl in List,
+        on: bl.board_id == b.id,
+        where:
+          b.id == ^board_id and bl.id == ^list_id and
             bl.archived == false,
         select: bl
 
@@ -237,5 +362,22 @@ defmodule Todo.Boards do
     card
     |> Card.changeset(attrs)
     |> Repo.update()
+  end
+
+  @doc """
+  Creates a board user.
+
+  ## Examples
+
+      iex> created_board_user("1234", "5678")
+      {:ok, %BoardUser{}}
+
+      iex> created_board_user("1234", "5678")
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def created_board_user(user_id, board_id) do
+    BoardUser.changeset(%Todo.Boards.BoardUser{}, %{user_id: user_id, board_id: board_id})
+    |> Repo.insert()
   end
 end

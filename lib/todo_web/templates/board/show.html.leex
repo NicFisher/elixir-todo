@@ -4,18 +4,20 @@
   <div class="flex items-center flex-col mb-16">
     <h2 class="text-gray-800 text-3xl font-semibold my-6"><%= assigns.board.name %></h2>
     <div class="flex">
-      <%= link "Edit Board", to: Routes.board_path(assigns.socket, :edit, assigns.board.id), method: :get, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" %>
+      <%= link "Edit Board", to: assigns.edit_board_link, method: :get, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" %>
       <%= live_component @socket, TodoWeb.ArchiveBoardComponent, id: assigns.board.id, board: assigns.board %>
-      <div phx-click="display-archive-board-component" phx-value-id="<%= assigns.board.id %>" id="archive-board-<%= assigns.board.id %>" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2 cursor-pointer">
-        Archive Board
-      </div>
-      <%= link "Add New List", to: Routes.list_path(assigns.socket, :new, assigns.board.id), method: :get, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+      <%= if assigns.show_archive_board_link do %>
+        <div phx-click="display-archive-board-component" phx-value-id="<%= assigns.board.id %>" id="archive-board-<%= assigns.board.id %>" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2 cursor-pointer">
+          Archive Board
+        </div>
+      <% end %>
+      <%= link "Add New List", to: assigns.new_list_link, method: :get, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
     </div>
   </div>
   <div class="w-full h-full px-6">
     <div class="flex h-full" id="lists">
       <%= for list <- assigns.board.lists do %>
-        <%= live_component @socket, TodoWeb.ListComponent, id: list.id, list: list, user_id: assigns.user.id, lists: assigns.board.lists %>
+        <%= live_component @socket, TodoWeb.ListComponent, id: list.id, list: list, user_id: assigns.user.id, lists: assigns.board.lists, edit_list_path: assigns.edit_list_path %>
       <% end %>
     </div>
   </div>

@@ -1,7 +1,7 @@
 <div class="flex w-full max-w-xs p-4 bg-white rounded-md list flex-col">
   <ul class="flex flex-col w-full mb-4">
     <li class="my-px">
-    <%= link to: Routes.list_path(assigns.socket, :edit, assigns.list.board_id, assigns.list.id), method: :get do %>
+    <%= link to: "#{@edit_list_path}#{assigns.list.board_id}/list/#{assigns.list.id}/edit", method: :get do %>
       <div class="flex flex-row items-center font-semibold h-12 p-4 rounded-lg text-gray-600 bg-gray-100">
         <span><%= @list.name %></span>
         <span class="flex items-center justify-center text-sm text-gray-500 font-semibold bg-gray-200 h-6 px-2 rounded-full ml-auto"><%= Enum.count(@list.cards) %></span>

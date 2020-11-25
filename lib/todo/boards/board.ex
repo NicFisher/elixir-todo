@@ -10,6 +10,8 @@ defmodule Todo.Boards.Board do
 
     belongs_to :user, User, foreign_key: :user_id, type: :binary_id
     has_many :lists, List
+    has_many :board_users, Todo.Boards.BoardUser
+    has_many :shared_boards_users, through: [:board_users, :board]
 
     timestamps()
   end

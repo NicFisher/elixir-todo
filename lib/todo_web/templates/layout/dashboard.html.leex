@@ -13,10 +13,11 @@
     <nav class="flex items-center justify-between flex-wrap bg-blue-500 p-6 font-bold font-sans">
       <div class="w-full block flex-grow flex items-center w-auto">
         <div class="text-base flex-grow">
-          <%= link "Boards", to: Routes.board_path(@conn, :index), method: :get, class: "block inline-block mt-0 text-white mr-4 hover:text-blue-700" %>
-          <%= link "Account", to: Routes.user_path(@conn, :edit, @conn.assigns.current_user.id), method: :get, class: "block inline-block mr-4 mt-0 text-white hover:text-blue-700" %>
+          <%= link "My Boards", to: Routes.board_path(@conn, :index), method: :get, class: "block inline-block mt-0 text-white mr-4 hover:text-blue-700" %>
+          <%= link "Shared Boards", to: Routes.shared_board_path(@conn, :index), method: :get, class: "block inline-block mt-0 text-white mr-4 hover:text-blue-700" %>
+          <%= link "Account", to: Routes.user_path(@conn, :edit, @conn.assigns.current_user.id), method: :get, class: "block inline-block mt-0 text-white hover:text-blue-700 mr-4" %>
           <a href="#responsive-header" class="block inline-block mt-0 text-white hover:text-blue-700">
-            Teams
+            Share
           </a>
         </div>
         <div>

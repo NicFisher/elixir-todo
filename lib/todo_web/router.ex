@@ -48,6 +48,14 @@ defmodule TodoWeb.Router do
     resources "/users", UserController, only: [:update, :edit]
     resources "/boards", BoardController, only: [:index, :new, :create, :edit, :update]
 
+    resources "/shared-boards/boards", SharedBoard.BoardController,
+      only: [:index, :edit, :update],
+      name: :shared_board
+
+    resources "/shared-boards/boards/:shared_board_id/list", SharedBoard.ListController,
+      only: [:new, :create, :edit, :update],
+      name: :shared_board_list
+
     resources "/boards/:board_id/list", ListController, only: [:new, :create, :edit, :update]
   end
 
@@ -55,6 +63,12 @@ defmodule TodoWeb.Router do
     pipe_through [:browser, :auth, :auth_required, :live_view]
 
     live "/:id", BoardLiveView
+  end
+
+  scope "/shared-boards/boards", TodoWeb do
+    pipe_through [:browser, :auth, :auth_required, :live_view]
+
+    live "/:shared_board_id", BoardLiveView
   end
 
   # Other scopes may use custom stacks.

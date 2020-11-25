@@ -9,6 +9,8 @@ defmodule Todo.Accounts.User do
     field :email, :string, null: false
     field :name, :string, null: false
     has_many :boards, Todo.Boards.Board
+    has_many :board_users, Todo.Boards.BoardUser
+    has_many :shared_boards, through: [:board_users, :board]
 
     timestamps()
   end

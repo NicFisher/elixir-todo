@@ -48,7 +48,7 @@ defmodule TodoWeb.BoardControllerTest do
     end
 
     test "without user in session", %{conn: conn} do
-      conn = get(conn, "boards/new")
+      conn = get(conn, "boards")
       assert conn.status == 401
     end
   end
