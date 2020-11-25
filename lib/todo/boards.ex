@@ -191,16 +191,16 @@ defmodule Todo.Boards do
   end
 
   @doc """
-  Gets a single list from a board for the user.
+  Gets a single shared board list from a board for the user.
 
   Raises `Ecto.NoResultsError` if the Board does not exist.
 
   ## Examples
 
-      iex> get_list!(123, 456, 789)
+      iex> get_shared_board_list!(123, 456, 789)
       %Board{}
 
-      iex> get_list!(456, 123, 789)
+      iex> get_shared_board_list!(456, 123, 789)
       ** (Ecto.NoResultsError)
 
   """
