@@ -60,7 +60,7 @@
                   </select>
                 </div>
               <% else %>
-                <span phx-click="display-due-date" phx-target="<%= @myself %>" class="text-gray-600 text-sm font-bold mb-2 p-2 border rounded" phx-value-changeset-name="<%= f.data.name %>" phx-value-changeset-description="<%= f.data.description %>">+ Add due date</span>
+                <span phx-click="display-due-date" phx-target="<%= @myself %>" class="text-gray-600 text-sm font-bold mb-2 p-2 border rounded add-due-date" phx-value-changeset-name="<%= f.data.name %>" phx-value-changeset-description="<%= f.data.description %>">+ Add due date</span>
               <% end %>
               <div class="flex items-center justify-center mt-10">
                 <%= submit "Add Card", phx_disable_with: "Adding Card", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" %>

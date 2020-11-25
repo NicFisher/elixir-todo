@@ -5,7 +5,7 @@ defmodule TodoWeb.LiveViewBoardTest do
   alias Todo.Accounts
   import Phoenix.ConnTest
   import Phoenix.LiveViewTest
-  alias Todo.Factory
+  alias Todo.{Factory, Repo}
 
   setup %{conn: conn} do
     {:ok, user} = Factory.create_user()
@@ -101,6 +101,7 @@ defmodule TodoWeb.LiveViewBoardTest do
       |> open_new_card_modal()
 
       assert has_element?(view, "#new-card-modal-1", "Add Card")
+      assert has_element?(view, "#new-card-modal-1", "+ Add due date")
     end
 
     test "submitting a new-card-form creates card and adds it to the board", %{
@@ -114,6 +115,24 @@ defmodule TodoWeb.LiveViewBoardTest do
       |> submit_new_card_form(%{name: "This is a new card", description: "description"})
 
       assert has_element?(view, "#cards-1", "This is a new card")
+    end
+
+    test "submitting a new-card-form with date creates card with due date and adds it to the board", %{
+      auth_conn: auth_conn,
+      board: board
+    } do
+      {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
+
+      view
+      |> open_new_card_modal()
+      |> click_add_due_date("#new-card-modal-1")
+      |> submit_new_card_form(%{name: "New card with due date", description: "description", due_date: %{day: "1", month: "1", year: "2020"}})
+
+      [card] = Repo.all(Todo.Boards.Card)
+      {:ok, due_date} = Date.new(2020, 1, 1)
+
+      assert has_element?(view, "#cards-1", "New card with due date")
+      assert card.due_date == due_date
     end
 
     test "invalid new-card-form returns error", %{auth_conn: auth_conn, board: board} do
@@ -152,9 +171,48 @@ defmodule TodoWeb.LiveViewBoardTest do
       |> render_click()
 
       assert has_element?(view, "#edit-card-modal-1", "Update Card")
+      assert has_element?(view, "#edit-card-modal-1", "+ Add due date")
     end
 
-    test "submitting a edit-card-form updates card and the board", %{
+    test "shows due date on edit card modal if due date exists on card", %{
+      auth_conn: auth_conn,
+      board: board,
+      list: list
+    } do
+      {:ok, card} = Factory.create_card("Some task", "The description", list, %{day: "1", month: "1", year: "2020"})
+      {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
+
+      view
+      |> element("##{card.id}", "Some task")
+      |> render_click()
+
+      assert has_element?(view, "#edit-card-modal-1", "Update Card")
+      refute has_element?(view, "#edit-card-modal-1", "+ Add due date")
+      assert has_element?(view, "#edit-card-modal-1", "Due date")
+    end
+
+    test "submitting a edit-card-form with due_date updates card and the board", %{
+      auth_conn: auth_conn,
+      board: board,
+      list: list
+    } do
+      {:ok, card} = Factory.create_card("Some task", "The description", list, %{day: "1", month: "1", year: "2020"})
+      {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
+
+      view
+      |> open_edit_card_modal(card)
+      |> submit_edit_card_form(%{name: "Updated name", description: "Updated description", due_date: %{day: "1", month: "1", year: "2021"}})
+
+      card = Repo.get_by(Todo.Boards.Card, id: card.id)
+      {:ok, due_date} = Date.new(2021, 1, 1)
+
+      assert has_element?(view, "#cards-1", "Updated name")
+      assert card.name == "Updated name"
+      assert card.description == "Updated description"
+      assert card.due_date == due_date
+    end
+
+    test "selecting Add due date on edit-card-modal shows due date input", %{
       auth_conn: auth_conn,
       board: board,
       list: list
@@ -164,9 +222,30 @@ defmodule TodoWeb.LiveViewBoardTest do
 
       view
       |> open_edit_card_modal(card)
-      |> submit_edit_card_form(%{name: "Updated name", description: "Updated description"})
+      |> click_add_due_date("#edit-card-modal-1")
+
+      assert has_element?(view, "#edit-card-modal-1", "Due date")
+    end
+
+    test "submitting a edit-card-form updates card and the board", %{
+      auth_conn: auth_conn,
+      board: board,
+      list: list
+    } do
+      {:ok, card} = Factory.create_card("Some task", "The description", list, %{day: "1", month: "1", year: "2020"})
+      {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
+
+      view
+      |> open_edit_card_modal(card)
+      |> submit_edit_card_form(%{name: "Updated name", description: "Updated description", due_date: %{day: "1", month: "1", year: "2021"}})
+
+      card = Repo.get_by(Todo.Boards.Card, id: card.id)
+      {:ok, due_date} = Date.new(2021, 1, 1)
 
       assert has_element?(view, "#cards-1", "Updated name")
+      assert card.name == "Updated name"
+      assert card.description == "Updated description"
+      assert card.due_date == due_date
     end
 
     test "invalid new-card-form returns error", %{auth_conn: auth_conn, board: board, list: list} do
@@ -410,6 +489,14 @@ defmodule TodoWeb.LiveViewBoardTest do
   defp open_new_card_modal(view) do
     view
     |> element("#add-new-card-button", "+ Add a card")
+    |> render_click()
+
+    view
+  end
+
+  defp click_add_due_date(view, modal_id) do
+    view
+    |> element("#{modal_id} .add-due-date", "+ Add due date")
     |> render_click()
 
     view
