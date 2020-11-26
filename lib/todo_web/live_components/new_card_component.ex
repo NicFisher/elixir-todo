@@ -9,7 +9,12 @@ defmodule TodoWeb.NewCardComponent do
 
   def mount(socket) do
     {:ok,
-     assign(socket, modal_state: "hidden", error: false, changeset: Boards.change_card(%Card{}))}
+     assign(socket,
+       modal_state: "hidden",
+       display_due_date: false,
+       error: false,
+       changeset: Boards.change_card(%Card{})
+     )}
   end
 
   def update(%{id: "new-card-component", modal_state: modal_state}, socket) do
@@ -20,17 +25,33 @@ defmodule TodoWeb.NewCardComponent do
     {:ok, assign(socket, assigns)}
   end
 
+  def handle_event("display-due-date", _params, socket) do
+    {:noreply, assign(socket, display_due_date: true)}
+  end
+
   def handle_event("hide-new-card-component", _params, socket) do
-    {:noreply, assign(socket, modal_state: "hidden", error: false)}
+    {:noreply, assign(socket, hide_modal_and_reset_state())}
+  end
+
+  def handle_event("update-form", %{"card" => attrs}, socket) do
+    {:noreply, assign(socket, changeset: Boards.change_card(%Card{}, attrs))}
   end
 
   def handle_event("create", %{"card" => attrs}, %{assigns: %{list: list}} = socket) do
-    with {:ok, _card} <-
-           Todo.Boards.create_card(attrs, list) do
+    with {:ok, _card} <- Boards.create_card(attrs, list) do
       send(self(), {:refresh_board})
-      {:noreply, assign(socket, modal_state: "hidden", error: false)}
+      {:noreply, assign(socket, hide_modal_and_reset_state())}
     else
       _error -> {:noreply, assign(socket, :error, true)}
     end
+  end
+
+  defp hide_modal_and_reset_state() do
+    %{
+      modal_state: "hidden",
+      error: false,
+      display_due_date: false,
+      changeset: Boards.change_card(%Card{})
+    }
   end
 end
