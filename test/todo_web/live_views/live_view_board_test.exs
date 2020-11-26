@@ -117,16 +117,21 @@ defmodule TodoWeb.LiveViewBoardTest do
       assert has_element?(view, "#cards-1", "This is a new card")
     end
 
-    test "submitting a new-card-form with date creates card with due date and adds it to the board", %{
-      auth_conn: auth_conn,
-      board: board
-    } do
+    test "submitting a new-card-form with date creates card with due date and adds it to the board",
+         %{
+           auth_conn: auth_conn,
+           board: board
+         } do
       {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
 
       view
       |> open_new_card_modal()
       |> click_add_due_date("#new-card-modal-1")
-      |> submit_new_card_form(%{name: "New card with due date", description: "description", due_date: %{day: "1", month: "1", year: "2020"}})
+      |> submit_new_card_form(%{
+        name: "New card with due date",
+        description: "description",
+        due_date: %{day: "1", month: "1", year: "2020"}
+      })
 
       [card] = Repo.all(Todo.Boards.Card)
       {:ok, due_date} = Date.new(2020, 1, 1)
@@ -179,7 +184,13 @@ defmodule TodoWeb.LiveViewBoardTest do
       board: board,
       list: list
     } do
-      {:ok, card} = Factory.create_card("Some task", "The description", list, %{day: "1", month: "1", year: "2020"})
+      {:ok, card} =
+        Factory.create_card("Some task", "The description", list, %{
+          day: "1",
+          month: "1",
+          year: "2020"
+        })
+
       {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
 
       view
@@ -196,12 +207,22 @@ defmodule TodoWeb.LiveViewBoardTest do
       board: board,
       list: list
     } do
-      {:ok, card} = Factory.create_card("Some task", "The description", list, %{day: "1", month: "1", year: "2020"})
+      {:ok, card} =
+        Factory.create_card("Some task", "The description", list, %{
+          day: "1",
+          month: "1",
+          year: "2020"
+        })
+
       {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
 
       view
       |> open_edit_card_modal(card)
-      |> submit_edit_card_form(%{name: "Updated name", description: "Updated description", due_date: %{day: "1", month: "1", year: "2021"}})
+      |> submit_edit_card_form(%{
+        name: "Updated name",
+        description: "Updated description",
+        due_date: %{day: "1", month: "1", year: "2021"}
+      })
 
       card = Repo.get_by(Todo.Boards.Card, id: card.id)
       {:ok, due_date} = Date.new(2021, 1, 1)
@@ -232,12 +253,22 @@ defmodule TodoWeb.LiveViewBoardTest do
       board: board,
       list: list
     } do
-      {:ok, card} = Factory.create_card("Some task", "The description", list, %{day: "1", month: "1", year: "2020"})
+      {:ok, card} =
+        Factory.create_card("Some task", "The description", list, %{
+          day: "1",
+          month: "1",
+          year: "2020"
+        })
+
       {:ok, view, _html} = live(auth_conn, "boards/#{board.id}")
 
       view
       |> open_edit_card_modal(card)
-      |> submit_edit_card_form(%{name: "Updated name", description: "Updated description", due_date: %{day: "1", month: "1", year: "2021"}})
+      |> submit_edit_card_form(%{
+        name: "Updated name",
+        description: "Updated description",
+        due_date: %{day: "1", month: "1", year: "2021"}
+      })
 
       card = Repo.get_by(Todo.Boards.Card, id: card.id)
       {:ok, due_date} = Date.new(2021, 1, 1)
