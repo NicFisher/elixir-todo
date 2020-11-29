@@ -35,11 +35,6 @@ defmodule Todo.BoardsTest do
       Accounts.get_user!(user_id)
     end
 
-    test "list_boards/0 returns all boards" do
-      board = board_fixture()
-      assert Boards.list_boards() == [board]
-    end
-
     test "list_boards_for_user/1 returns all boards" do
       board = board_fixture()
       assert Boards.list_boards_for_user(board.user_id) == [board]

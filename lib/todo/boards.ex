@@ -5,21 +5,7 @@ defmodule Todo.Boards do
 
   import Ecto.Query, warn: false
   alias Todo.Repo
-
-  alias Todo.Boards.{Board, List, Lists.ListManager, Card, BoardUser}
-
-  @doc """
-  Returns the list of boards.
-
-  ## Examples
-
-      iex> list_boards()
-      [%Board{}, ...]
-
-  """
-  def list_boards do
-    Repo.all(Board)
-  end
+  alias Todo.Boards.{Board, List, Lists.ListManager, Card, BoardUser, ShareBoardToken}
 
   @doc """
   Returns list of boards for a specific user.
@@ -379,5 +365,38 @@ defmodule Todo.Boards do
   def created_board_user(user_id, board_id) do
     BoardUser.changeset(%Todo.Boards.BoardUser{}, %{user_id: user_id, board_id: board_id})
     |> Repo.insert()
+  end
+
+  @doc """
+  Creates a share board token.
+
+  ## Examples
+
+      iex> create_share_board_token("1234", "5678")
+      {:ok, %ShareBoardToken{}}
+
+      iex> create_share_board_token("1234", "5678")
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_share_board_token(board_id, user_id) do
+    token = :crypto.strong_rand_bytes(30) |> Base.encode64
+    expiry_date = Timex.now |> Timex.shift(days: 1)
+
+    ShareBoardToken.changeset(%ShareBoardToken{}, %{user_id: user_id, board_id: board_id, token: token, expiry_date: expiry_date})
+    |> Repo.insert()
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking share board token changes.
+
+  ## Examples
+
+      iex> change_share_board_token(board)
+      %Ecto.Changeset{data: %ShareBoardToken{}}
+
+  """
+  def change_share_board_token(%ShareBoardToken{} = share_board_token, attrs \\ %{}) do
+    ShareBoardToken.changeset(share_board_token, attrs)
   end
 end
