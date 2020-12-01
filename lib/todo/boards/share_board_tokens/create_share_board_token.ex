@@ -1,4 +1,4 @@
-defmodule CreateShareBoardToken do
+defmodule Todo.ShareBoardTokens.CreateShareBoardToken do
   alias Todo.Accounts.User
   alias Todo.Boards.Board
 
@@ -22,10 +22,9 @@ defmodule CreateShareBoardToken do
   defp board_belongs_to_current_user("", _), do: {:error, "Board must be selected"}
 
   defp board_belongs_to_current_user(board_id, current_user_id) do
-    case Todo.Repo.get_by(Board, [id: board_id, user_id: current_user_id]) do
+    case Todo.Repo.get_by(Board, id: board_id, user_id: current_user_id) do
       %Todo.Boards.Board{} = board -> {:ok, board}
       _ -> {:error, "Board does not belong to current user"}
     end
   end
-
 end

@@ -380,10 +380,15 @@ defmodule Todo.Boards do
 
   """
   def create_share_board_token(board_id, user_id) do
-    token = :crypto.strong_rand_bytes(30) |> Base.encode64
-    expiry_date = Timex.now |> Timex.shift(days: 1)
+    token = :crypto.strong_rand_bytes(30) |> Base.encode64()
+    expiry_date = Timex.now() |> Timex.shift(days: 1)
 
-    ShareBoardToken.changeset(%ShareBoardToken{}, %{user_id: user_id, board_id: board_id, token: token, expiry_date: expiry_date})
+    ShareBoardToken.changeset(%ShareBoardToken{}, %{
+      user_id: user_id,
+      board_id: board_id,
+      token: token,
+      expiry_date: expiry_date
+    })
     |> Repo.insert()
   end
 
