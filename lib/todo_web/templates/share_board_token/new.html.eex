@@ -1,0 +1,18 @@
+<div class="bg-white rounded-t-lg overflow-hidden p-4 px-3 py-10 bg-gray-200 flex justify-center align-middle h-screen">
+  <div class="w-full max-w-xs">
+    <h3 class="text-3xl text-center text-gray-800 font-bold py-6 px-4 ">Share Board</h3>
+    <%= form_for @changeset, Routes.share_board_token_path(@conn, :create), [class: "bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"], fn f -> %>
+      <div class="mb-4">
+        <label class="control-label block text-gray-700 text-sm font-bold mb-2" for="card_description">Board</label>
+        <%= select f, :board_id, Enum.map(assigns.boards, fn %{id: id, name: name} -> { name, id } end), prompt: "Select a board", class: "bg-white appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline align-middle" %>
+      </div>
+      <div class="mb-6">
+        <label class="control-label block text-gray-700 text-sm font-bold mb-2" for="card_description">User Email</label>
+        <%= email_input f, :user_email, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", placeholder: "john@email.com" %>
+      </div>
+      <div class="flex items-center justify-center">
+        <%= submit "Share Board", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" %>
+      </div>
+    <% end %>
+  </div>
+</div>

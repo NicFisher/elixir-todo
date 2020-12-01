@@ -57,6 +57,8 @@ defmodule TodoWeb.Router do
       name: :shared_board_list
 
     resources "/boards/:board_id/list", ListController, only: [:new, :create, :edit, :update]
+
+    resources "/share-board", ShareBoardTokenController, only: [:new, :create, :index]
   end
 
   scope "/boards", TodoWeb do

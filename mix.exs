@@ -49,6 +49,7 @@ defmodule Todo.MixProject do
       {:argon2_elixir, "~> 2.0"},
       {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
       {:phoenix_live_view, "~> 0.13.1"},
+      {:timex, "~> 3.5"},
       {:floki, ">= 0.0.0", only: :test}
     ]
   end
