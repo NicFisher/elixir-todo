@@ -9,6 +9,8 @@ defmodule Todo.Application do
     children = [
       # Start the Ecto repository
       Todo.Repo,
+      # Start Ecto Job
+      {Todo.JobQueue, repo: Todo.Repo, max_demand: 10},
       # Start the Telemetry supervisor
       TodoWeb.Telemetry,
       # Start the PubSub system
