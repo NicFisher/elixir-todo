@@ -9,4 +9,10 @@ defmodule Todo.Workers.ShareBoardEmailWorker do
     |> Todo.JobQueue.new()
     |> Todo.Repo.insert()
   end
+
+  def perform(%Ecto.Multi{} = multi, %{"token" => token}) do
+    IO.puts("Performing Todo.Workers.ShareBoardEmailWorker")
+    multi
+    |> Todo.Repo.transaction()
+  end
 end
