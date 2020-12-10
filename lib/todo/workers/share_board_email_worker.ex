@@ -1,5 +1,4 @@
 defmodule Todo.Workers.ShareBoardEmailWorker do
-
   def new(token) do
     %{"type" => to_string(__MODULE__), "token" => token}
   end
@@ -10,8 +9,9 @@ defmodule Todo.Workers.ShareBoardEmailWorker do
     |> Todo.Repo.insert()
   end
 
-  def perform(%Ecto.Multi{} = multi, %{"token" => token}) do
+  def perform(%Ecto.Multi{} = multi, %{"token" => _token}) do
     IO.puts("Performing Todo.Workers.ShareBoardEmailWorker")
+
     multi
     |> Todo.Repo.transaction()
   end
