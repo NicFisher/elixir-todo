@@ -53,11 +53,17 @@ defmodule Todo.ShareBoardTokens.CreateShareBoardTokenTest do
       post(auth_conn, "share-board", params)
 
       all_tokens = Todo.Repo.all(ShareBoardToken)
+      [share_board_email_job] = Todo.Repo.all(Todo.JobQueue)
       new_token = List.first(all_tokens)
 
       assert new_token.board_id == board.id
       assert new_token.user_id == user2.id
       assert new_token.expiry_date < Timex.now() |> Timex.shift(days: 2)
+
+      assert share_board_email_job.params == %{
+               "type" => "Elixir.Todo.Workers.ShareBoardEmailWorker",
+               "token" => new_token.token
+             }
     end
 
     test "without valid email in params", %{auth_conn: auth_conn, user: user} do

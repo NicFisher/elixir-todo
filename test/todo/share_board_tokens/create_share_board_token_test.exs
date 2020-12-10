@@ -13,12 +13,23 @@ defmodule Todo.ShareBoardTokens.CreateShareBoardTokenTest do
   end
 
   describe "create/3" do
-    test "creates a share board token", %{board: board, user: user, user2: user2} do
+    test "creates a share board token and job for ShareBoardEmailWorker", %{
+      board: board,
+      user: user,
+      user2: user2
+    } do
       {:ok, %ShareBoardToken{} = share_board_token} =
         CreateShareBoardToken.create(board.id, user2.email, user.id)
 
       assert share_board_token.board_id == board.id
       assert share_board_token.user_id == user2.id
+
+      [share_board_email_job] = Todo.Repo.all(Todo.JobQueue)
+
+      assert share_board_email_job.params == %{
+               "type" => "Elixir.Todo.Workers.ShareBoardEmailWorker",
+               "token" => share_board_token.token
+             }
     end
 
     test "returns an error if board does not exist", %{user: user, user2: user2} do

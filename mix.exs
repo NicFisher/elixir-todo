@@ -50,7 +50,8 @@ defmodule Todo.MixProject do
       {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
       {:phoenix_live_view, "~> 0.13.1"},
       {:timex, "~> 3.5"},
-      {:floki, ">= 0.0.0", only: :test}
+      {:floki, ">= 0.0.0", only: :test},
+      {:ecto_job, "~> 3.1"}
     ]
   end
 
