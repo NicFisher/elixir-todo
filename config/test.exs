@@ -20,3 +20,8 @@ config :todo, TodoWeb.Endpoint,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
+
+config :todo, :send_grid_api_key, "12345"
+config :todo, :send_grid_url, "http://localhost:4000/v3/mail/send"
+
+config :bypass, enable_debug_log: true

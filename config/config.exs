@@ -31,6 +31,8 @@ config :todo, Todo.Accounts.Guardian,
   issuer: "todo",
   secret_key: "xq3C5PIOBbGD2F4YqVCS5gdyfGXAh2ODtTzHoO8abDi0RWr/YXeXmj0cWRSeqxm5"
 
+config :todo, :send_grid_api_key, "hello"
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

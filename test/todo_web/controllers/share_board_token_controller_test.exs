@@ -1,7 +1,7 @@
 defmodule Todo.ShareBoardTokens.CreateShareBoardTokenTest do
   use TodoWeb.ConnCase
   alias Todo.Accounts.{User, Guardian}
-  alias Todo.Boards.ShareBoardToken
+  alias Todo.Boards.{ShareBoardToken, BoardUser}
   alias Todo.Factory
 
   setup %{conn: conn} do
@@ -11,7 +11,13 @@ defmodule Todo.ShareBoardTokens.CreateShareBoardTokenTest do
       conn
       |> Guardian.Plug.sign_in(%User{id: user.id})
 
-    {:ok, auth_conn: auth_conn, conn: conn, user: user}
+    expiry_date = Timex.now() |> Timex.shift(days: 1)
+    {:ok, board} = Factory.create_board(user, "New Board")
+
+    {:ok, %ShareBoardToken{token: token}} =
+      Factory.create_share_board_token(user.id, board.id, expiry_date)
+
+    {:ok, auth_conn: auth_conn, conn: conn, user: user, token: token, board: board}
   end
 
   describe "new/2" do
@@ -52,9 +58,8 @@ defmodule Todo.ShareBoardTokens.CreateShareBoardTokenTest do
 
       post(auth_conn, "share-board", params)
 
-      all_tokens = Todo.Repo.all(ShareBoardToken)
+      new_token = Todo.Repo.get_by(ShareBoardToken, user_id: user2.id)
       [share_board_email_job] = Todo.Repo.all(Todo.JobQueue)
-      new_token = List.first(all_tokens)
 
       assert new_token.board_id == board.id
       assert new_token.user_id == user2.id
@@ -110,6 +115,43 @@ defmodule Todo.ShareBoardTokens.CreateShareBoardTokenTest do
       }
 
       conn = post(conn, "share-board", params)
+      assert conn.status == 401
+    end
+  end
+
+  describe "activate/2" do
+    test "creates board user with valid params", %{
+      auth_conn: auth_conn,
+      token: token,
+      board: board,
+      user: user
+    } do
+      conn = get(auth_conn, "share-board/activate?token=#{token}")
+
+      assert redirected_to(conn) == "/shared-boards/boards/#{board.id}"
+      [board_user] = Todo.Repo.all(BoardUser)
+      assert board_user.board_id == board.id
+      assert board_user.user_id == user.id
+    end
+
+    test "redirects to share boards page if token expired", %{
+      auth_conn: auth_conn,
+      board: board,
+      user: user
+    } do
+      expiry_date = Timex.now() |> Timex.shift(days: -1)
+
+      {:ok, %ShareBoardToken{token: token}} =
+        Factory.create_share_board_token(user.id, board.id, expiry_date)
+
+      conn = get(auth_conn, "share-board/activate?token=#{token}")
+
+      assert redirected_to(conn) == "/shared-boards/boards"
+      assert [] == Todo.Repo.all(BoardUser)
+    end
+
+    test "without user in session", %{conn: conn, token: token} do
+      conn = get(conn, "share-board/activate?token=#{token}")
       assert conn.status == 401
     end
   end

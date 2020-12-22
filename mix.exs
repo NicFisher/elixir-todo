@@ -51,7 +51,9 @@ defmodule Todo.MixProject do
       {:phoenix_live_view, "~> 0.13.1"},
       {:timex, "~> 3.5"},
       {:floki, ">= 0.0.0", only: :test},
-      {:ecto_job, "~> 3.1"}
+      {:ecto_job, "~> 3.1"},
+      {:httpoison, "~> 1.7"},
+      {:bypass, "~> 2.1", only: :test}
     ]
   end
 
