@@ -1,5 +1,5 @@
 defmodule Todo.Factory do
-  alias Todo.Boards.{List, Board, Card, BoardUser}
+  alias Todo.Boards.{List, Board, Card, BoardUser, ShareBoardToken}
   alias Todo.Accounts.User
   alias Todo.Repo
 
@@ -49,5 +49,21 @@ defmodule Todo.Factory do
   def create_board_user(user_id, board_id) do
     BoardUser.changeset(%Todo.Boards.BoardUser{}, %{user_id: user_id, board_id: board_id})
     |> Repo.insert()
+  end
+
+  def create_share_board_token(user_id, board_id, expiry_date) do
+    ShareBoardToken.changeset(%ShareBoardToken{}, %{
+      user_id: user_id,
+      board_id: board_id,
+      token: create_token(),
+      expiry_date: expiry_date
+    })
+    |> Repo.insert()
+  end
+
+  defp create_token do
+    :crypto.strong_rand_bytes(30)
+    |> Base.encode64(padding: false)
+    |> String.replace("+", "")
   end
 end
