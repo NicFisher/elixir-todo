@@ -45,7 +45,6 @@ defmodule Todo.Workers.ShareBoardEmailWorker do
     "Elixir Todo List - Shared Board"
   end
 
-  # add a config here for the app_base_url
   defp email_content(board_name, token) do
     """
     <html>
