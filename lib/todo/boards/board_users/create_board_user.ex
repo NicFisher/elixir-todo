@@ -6,7 +6,7 @@ defmodule Todo.BoardUsers.CreateBoardUser do
   def create(token, current_user_id) do
     with %ShareBoardToken{user_id: user_id} = share_board_token <- get_share_board_token(token),
          true <- board_user_does_not_exist?(share_board_token),
-         true <- expired?(share_board_token),
+         true <- not_expired?(share_board_token),
          true <- user_id_matches_share_board_token_user(user_id, current_user_id),
          {:ok, board_user} <- create_board_user(share_board_token) do
       {:ok, board_user}
@@ -23,7 +23,7 @@ defmodule Todo.BoardUsers.CreateBoardUser do
     end
   end
 
-  defp expired?(share_board_token) do
+  defp not_expired?(share_board_token) do
     case DateTime.compare(share_board_token.expiry_date, Timex.now()) do
       :lt -> {false, "Token has expired. Unable to share board."}
       _ -> true

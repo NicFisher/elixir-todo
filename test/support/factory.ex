@@ -1,6 +1,6 @@
 defmodule Todo.Factory do
   alias Todo.Boards.{List, Board, Card, BoardUser, ShareBoardToken}
-  alias Todo.Accounts.User
+  alias Todo.Accounts.{User, ResetPasswordToken}
   alias Todo.Repo
 
   def create_user(email \\ "email@email.com") do
@@ -55,6 +55,16 @@ defmodule Todo.Factory do
     ShareBoardToken.changeset(%ShareBoardToken{}, %{
       user_id: user_id,
       board_id: board_id,
+      token: create_token(),
+      expiry_date: expiry_date
+    })
+    |> Repo.insert()
+  end
+
+  def create_reset_password_token(user_id, expiry_date, used \\ false) do
+    ResetPasswordToken.changeset(%ResetPasswordToken{}, %{
+      user_id: user_id,
+      used: used,
       token: create_token(),
       expiry_date: expiry_date
     })

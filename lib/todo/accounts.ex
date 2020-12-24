@@ -7,7 +7,7 @@ defmodule Todo.Accounts do
   alias Todo.Repo
   alias Argon2
 
-  alias Todo.Accounts.User
+  alias Todo.Accounts.{User, ResetPasswordToken}
 
   def authenticate_user(email, plain_text_password) do
     query = from u in User, where: u.email == ^email
@@ -118,5 +118,48 @@ defmodule Todo.Accounts do
   """
   def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking reset password token changes.
+
+  ## Examples
+
+      iex> change_reset_password_token(board)
+      %Ecto.Changeset{data: %ResetPasswordToken{}}
+
+  """
+  def change_reset_password_token(%ResetPasswordToken{} = reset_password_token, attrs \\ %{}) do
+    ResetPasswordToken.changeset(reset_password_token, attrs)
+  end
+
+  @doc """
+  Creates a user.
+
+  ## Examples
+
+      iex> create_user(%{field: value})
+      {:ok, %User{}}
+
+      iex> create_user(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_reset_password_token(user_id) do
+    expiry_date = Timex.now() |> Timex.shift(days: 1)
+
+    %ResetPasswordToken{}
+    |> ResetPasswordToken.changeset(%{
+      user_id: user_id,
+      expiry_date: expiry_date,
+      token: create_token()
+    })
+    |> Repo.insert()
+  end
+
+  defp create_token() do
+    :crypto.strong_rand_bytes(30)
+    |> Base.encode64(padding: false)
+    |> String.replace("+", "")
   end
 end
