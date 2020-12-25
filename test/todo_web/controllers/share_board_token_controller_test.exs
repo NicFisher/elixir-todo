@@ -1,4 +1,4 @@
-defmodule Todo.ShareBoardTokens.CreateShareBoardTokenTest do
+defmodule Todo.ShareBoardTokens.ShareBoardTokenControllerTest do
   use TodoWeb.ConnCase
   alias Todo.Accounts.{User, Guardian}
   alias Todo.Boards.{ShareBoardToken, BoardUser}

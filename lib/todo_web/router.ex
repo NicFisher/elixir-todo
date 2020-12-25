@@ -40,6 +40,10 @@ defmodule TodoWeb.Router do
     resources "/users", UserController, only: [:new, :create]
     post "/login", SessionController, :login
     post "/logout", SessionController, :logout
+
+    resources "/reset-password", ResetPasswordTokenController, only: [:new, :create]
+    get "/reset-password/reset", ResetPasswordTokenController, :reset
+    put "/reset-password/:token", ResetPasswordTokenController, :update
   end
 
   scope "/", TodoWeb do
