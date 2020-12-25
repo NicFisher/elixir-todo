@@ -54,9 +54,15 @@ defmodule TodoWeb.ResetPasswordTokenController do
   end
 
   defp update_user_and_reset_password_token(reset_password_token, new_password) do
-    Multi.new
-    |> Multi.update(:reset_password_token, Accounts.change_reset_password_token(reset_password_token, %{used: true}))
-    |> Multi.update(:user, Accounts.change_user(reset_password_token.user, %{password: new_password}))
+    Multi.new()
+    |> Multi.update(
+      :reset_password_token,
+      Accounts.change_reset_password_token(reset_password_token, %{used: true})
+    )
+    |> Multi.update(
+      :user,
+      Accounts.change_user(reset_password_token.user, %{password: new_password})
+    )
     |> Todo.Repo.transaction()
   end
 end

@@ -58,7 +58,10 @@ defmodule Todo.ShareBoardTokens.ResetPasswordTokenControllerTest do
       user: user
     } do
       expiry_date = Timex.now() |> Timex.shift(days: 1)
-      {:ok, %ResetPasswordToken{token: token}} = Factory.create_reset_password_token(user.id, expiry_date)
+
+      {:ok, %ResetPasswordToken{token: token}} =
+        Factory.create_reset_password_token(user.id, expiry_date)
+
       conn = get(conn, "reset-password/reset?token=#{token}")
 
       assert html_response(conn, 200) =~ "Update Password"
@@ -69,7 +72,10 @@ defmodule Todo.ShareBoardTokens.ResetPasswordTokenControllerTest do
       user: user
     } do
       expiry_date = Timex.now() |> Timex.shift(days: -1)
-      {:ok, %ResetPasswordToken{token: token}} = Factory.create_reset_password_token(user.id, expiry_date)
+
+      {:ok, %ResetPasswordToken{token: token}} =
+        Factory.create_reset_password_token(user.id, expiry_date)
+
       conn = get(conn, "reset-password/reset?token=#{token}")
       assert html_response(conn, 200) =~ "Reset password link has expired."
       assert html_response(conn, 200) =~ "Reset password"
@@ -80,7 +86,10 @@ defmodule Todo.ShareBoardTokens.ResetPasswordTokenControllerTest do
       user: user
     } do
       expiry_date = Timex.now() |> Timex.shift(days: 1)
-      {:ok, %ResetPasswordToken{token: token}} = Factory.create_reset_password_token(user.id, expiry_date, true)
+
+      {:ok, %ResetPasswordToken{token: token}} =
+        Factory.create_reset_password_token(user.id, expiry_date, true)
+
       conn = get(conn, "reset-password/reset?token=#{token}")
       assert html_response(conn, 200) =~ "Reset password link has already been used."
       assert html_response(conn, 200) =~ "Reset password"
@@ -101,7 +110,9 @@ defmodule Todo.ShareBoardTokens.ResetPasswordTokenControllerTest do
       user: user
     } do
       expiry_date = Timex.now() |> Timex.shift(days: 1)
-      {:ok, %ResetPasswordToken{token: token}} = Factory.create_reset_password_token(user.id, expiry_date)
+
+      {:ok, %ResetPasswordToken{token: token}} =
+        Factory.create_reset_password_token(user.id, expiry_date)
 
       params = %{
         "user" => %{
@@ -124,7 +135,9 @@ defmodule Todo.ShareBoardTokens.ResetPasswordTokenControllerTest do
       user: user
     } do
       expiry_date = Timex.now() |> Timex.shift(days: -1)
-      {:ok, %ResetPasswordToken{token: token}} = Factory.create_reset_password_token(user.id, expiry_date)
+
+      {:ok, %ResetPasswordToken{token: token}} =
+        Factory.create_reset_password_token(user.id, expiry_date)
 
       params = %{
         "user" => %{
@@ -143,7 +156,9 @@ defmodule Todo.ShareBoardTokens.ResetPasswordTokenControllerTest do
       user: user
     } do
       expiry_date = Timex.now() |> Timex.shift(days: 1)
-      {:ok, %ResetPasswordToken{token: token}} = Factory.create_reset_password_token(user.id, expiry_date, true)
+
+      {:ok, %ResetPasswordToken{token: token}} =
+        Factory.create_reset_password_token(user.id, expiry_date, true)
 
       params = %{
         "user" => %{
