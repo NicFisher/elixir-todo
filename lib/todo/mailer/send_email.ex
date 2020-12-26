@@ -1,7 +1,7 @@
 defmodule Todo.Mailer.SendEmail do
   alias Todo.Config
 
-  def perform(_to_email, to_name, subject, content) do
+  def perform(to_email, to_name, subject, content) do
     case HTTPoison.post(
            Config.send_grid_url(),
            request_body(to_name, subject, content),
@@ -49,4 +49,12 @@ defmodule Todo.Mailer.SendEmail do
   end
 
   defp handle_error(body), do: {:error, body}
+
+  defp send_to_email(to_email) do
+    if Config.default_email_address() do
+      Config.default_email_address()
+    else
+      to_email
+    end
+  end
 end
