@@ -56,5 +56,6 @@ config :logger, level: :info
 config :todo, :send_grid_api_key, System.get_env("SEND_GRID_API_KEY")
 config :todo, :send_grid_url, System.get_env("SEND_GRID_URL")
 config :todo, :base_url, System.get_env("BASE_URL")
+config :todo, :default_email_address, System.get_env("DEFAULT_EMAIL_ADDRESS")
 
 import_config "prod.secret.exs"
