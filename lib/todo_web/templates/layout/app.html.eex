@@ -12,13 +12,6 @@
     <nav class="flex items-center justify-between flex-wrap bg-blue-500 p-6 font-bold font-sans">
       <div class="w-full block flex-grow flex items-center w-auto">
         <div class="text-base flex-grow">
-          <%= link "Home", to: Routes.home_path(@conn, :index), method: :get, class: "block inline-block mt-0 text-white mr-4 hover:text-blue-700" %>
-          <a href="#responsive-header" class="block inline-block mt-0 text-white mr-4 hover:text-blue-700">
-            Examples
-          </a>
-          <a href="#responsive-header" class="block inline-block mt-0 text-white hover:text-blue-700">
-            Blog
-          </a>
         </div>
         <div>
           <%= link "Login", to: Routes.session_path(@conn, :new), method: :get, class: "inline-block text-base px-4 py-2 mr-3 leading-none border rounded bg-blue-400 text-white border-blue-400 hover:border-transparent hover:bg-blue-700 hover:border-bg-blue-400 mt-0" %>
