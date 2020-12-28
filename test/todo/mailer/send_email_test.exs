@@ -24,7 +24,7 @@ defmodule Todo.Mailer.SendEmailTest do
         assert params["personalizations"] == [
                  %{
                    "subject" => "Email Subject",
-                   "to" => [%{"email" => "nicfisher90@gmail.com", "name" => "John"}]
+                   "to" => [%{"email" => "john@email.com.au.au", "name" => "John"}]
                  }
                ]
 

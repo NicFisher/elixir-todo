@@ -1,8 +1,8 @@
-defmodule TodoWeb.PageControllerTest do
+defmodule TodoWeb.HomeControllerTest do
   use TodoWeb.ConnCase
 
   test "GET /", %{conn: conn} do
     conn = get(conn, "/")
-    assert html_response(conn, 200) =~ "Todo List"
+    assert redirected_to(conn) == "/login"
   end
 end

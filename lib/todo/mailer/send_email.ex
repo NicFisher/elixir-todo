@@ -4,7 +4,7 @@ defmodule Todo.Mailer.SendEmail do
   def perform(to_email, to_name, subject, content) do
     case HTTPoison.post(
            Config.send_grid_url(),
-           request_body(to_name, subject, content),
+           request_body(to_email, to_name, subject, content),
            headers()
          ) do
       {:ok, %HTTPoison.Response{body: ""}} -> {:ok, "Request sent to SendGrid"}
@@ -13,13 +13,13 @@ defmodule Todo.Mailer.SendEmail do
     end
   end
 
-  defp request_body(to_name, subject, content) do
+  defp request_body(to_email, to_name, subject, content) do
     content = %{
       personalizations: [
         %{
           to: [
             %{
-              email: "nicfisher90@gmail.com",
+              email: send_to_email(to_email),
               name: to_name
             }
           ],

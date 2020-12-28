@@ -35,7 +35,6 @@ defmodule TodoWeb.Router do
     pipe_through [:browser, :auth]
 
     get "/", HomeController, :index
-
     get "/login", SessionController, :new
     resources "/users", UserController, only: [:new, :create]
     post "/login", SessionController, :login

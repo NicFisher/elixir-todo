@@ -2,7 +2,7 @@ defmodule TodoWeb.ResetPasswordTokenController do
   use TodoWeb, :controller
   alias Todo.Accounts
   alias Ecto.Multi
-  alias Todo.Accounts.{ResetPasswordToken, User, ResetPasswordToken.CreateResetPasswordToken}
+  alias Todo.Accounts.{ResetPasswordToken, ResetPasswordToken.CreateResetPasswordToken}
 
   def new(conn, _params) do
     render_new(conn)

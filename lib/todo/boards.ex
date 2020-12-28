@@ -394,7 +394,7 @@ defmodule Todo.Boards do
   defp create_token do
     :crypto.strong_rand_bytes(30)
     |> Base.encode64(padding: false)
-    |> String.replace("+", "")
+    |> String.replace(["+", "/"], "")
   end
 
   @doc """

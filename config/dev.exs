@@ -78,4 +78,4 @@ config :phoenix, :plug_init_mode, :runtime
 config :todo, :send_grid_api_key, System.get_env("SEND_GRID_API_KEY")
 config :todo, :send_grid_url, System.get_env("SEND_GRID_URL")
 config :todo, :base_url, "http://localhost:4000"
-config :todo, :default_email_address, System. get_env("DEFAULT_EMAIL_ADDRESS")
+config :todo, :default_email_address, System.get_env("DEFAULT_EMAIL_ADDRESS")
