@@ -1,5 +1,5 @@
 defmodule Todo.Accounts.ResetPasswordToken.CreateResetPasswordToken do
-  alias Todo.{Accounts.ResetPasswordToken, Accounts, Accounts.User}
+  alias Todo.{Accounts, Accounts.User}
   alias Todo.Workers.ResetPasswordEmailWorker
   alias Todo.Repo
 
