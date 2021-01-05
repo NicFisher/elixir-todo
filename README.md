@@ -1,14 +1,26 @@
-# Todo
+# Todo List/Trello
 
-A phoenix application similar to Trello. Users can create a board with custom columns and add cards to the board. They are also able to create a team and share boards within the team.
+A very basic todo list / trello app using Elixir, Phoenix, LiveView, EctoJob, and Tailwind CSS.
+
+**Functionality:**
+
+- Login and logout
+- Reset password
+- Create, edit, and update boards, lists, and cards
+- Share boards with other users
+- Update account details
+
+**Up and running:**
+
+Elixir version = 1.7.0
+
+Erlang version = 22.0.3
 
 ```
-git@github.com:NicFisher/elixir-todo.git
-cd todo
+git clone https://github.com/NicFisher/elixir-todo.git
+cd elixir-todo
 mix deps.get
 mix ecto.setup
-cd apps/aegis_web/assets && npm install
+cd assets && yarn install
 iex -S mix phx.server
 ```
-
-Tailwind CSS is used for the styling.
